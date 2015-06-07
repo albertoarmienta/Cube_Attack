@@ -12,12 +12,12 @@ import javax.swing.*;
 
 public class Board extends Applet {
    
-    public Board()
+    public Board() throws IOException
     {
         Block[][] blockArray = new Block[5][5];
         JFrame window = buildFrame();
        
-        try {
+        
             final BufferedImage image = ImageIO.read(new File("src\\resources\\block.png"));
             JPanel pane = new JPanel() {
             @Override
@@ -28,9 +28,9 @@ public class Board extends Applet {
         };
             window.add(pane);
             
-        } catch (IOException ex) {
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+        
+        
         
         
         
