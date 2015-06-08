@@ -11,41 +11,19 @@ import javax.imageio.*;
 import javax.swing.*;
 
 public class Board extends Applet {
-   
+    public static final int WIDTH = 407 , HEIGHT = 840;
+  
     JFrame frame = buildFrame();
-     private BufferedImage img;
-
-     public void paintComponent(Graphics g) {
-      //super.paintComponent(g);
-      //g.drawImage(Block.image.getImage(), 0, 250, this);
-     }
      
     public JFrame buildFrame(){
         JFrame window = new JFrame("Cube Attack");
-        window.setPreferredSize(new Dimension (500,500));
-        //window.setLayout(new GridLayout());
+        window.setPreferredSize(new Dimension (WIDTH,HEIGHT));
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-        //window.setLocation(250,250);
         //window.setLocationRelativeTo(null);
-        
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout());
-       // panel.setPreferredSize(new Dimension(5,5));
-       // panel.setLocation(0, 0);
-        panel.setBackground(Color.blue);
-        
-        JLabel label = new JLabel();
-        label.setIcon(Block.image);
-        label.setPreferredSize(new Dimension(50,50));
-        
-        panel.add(label);
-        
+        GUIPanel panel = new GUIPanel();      
         window.getContentPane().add(panel);
-        
-        
         //window.getContentPane().add(label,BorderLayout.CENTER);
-        
         window.pack();
         window.setVisible(true);
         return window;
