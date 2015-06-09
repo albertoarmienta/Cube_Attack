@@ -80,12 +80,12 @@ class GUIPanel extends JPanel implements ActionListener {
             g.drawLine(0, imgSize * i, MAPX_SIZE, imgSize * i);
 
         }
-        for(int i=0;i<Board.levelArray.length;i++)
+        for(int x=0;x<Board.levelArray.length;x++)
         {
-            for(int j=0;j<Board.levelArray[0].length;j++)
+            for(int y=0;y<Board.levelArray[0].length;y++)
             {
-                if(Board.levelArray[i][j] instanceof Block)
-                    g.drawImage(Board.levelArray[i][j].getImage(), 50*i, 50*j, this);
+                if(Board.levelArray[x][y] instanceof Block)
+                    g.drawImage(Board.levelArray[x][y].getImage(), imgSize*x, imgSize*y, this);
             //block.x = 50*i
             //block.y = 50*j
             //<hittest> : if(blocks[i].x - blocks[i+1].x < Block.WIDTH)
@@ -106,12 +106,14 @@ class GUIPanel extends JPanel implements ActionListener {
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
-
+            
         }
 
         public void keyPressed(KeyEvent e) {
 
             int key = e.getKeyCode();
+            if(key == 32)
+                Board.moveUp();
             
         }
     }

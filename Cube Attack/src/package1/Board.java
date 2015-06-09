@@ -16,6 +16,10 @@ public class Board extends Applet {
     
      public Board(){
         resetArray();
+        setArray(4,15,new Block("BLUE"));
+        setArray(3,15,new Block("RED"));
+        setArray(2,15,new Block("BLACK"));
+        setArray(1,14,new Block("WHITE"));
         JFrame frame = buildFrame(); 
      }
     public JFrame buildFrame(){
@@ -32,9 +36,18 @@ public class Board extends Applet {
         return window;
     }
     public void resetArray(){
-        for(int i = 0; i<levelArray.length;i++)
-            for(int j=0; j<levelArray[0].length;j++)
-                levelArray[i][j] = new Block("EMPTY");
+        for(int x = 0; x<levelArray.length;x++)
+            for(int y=0; y<levelArray[0].length;y++)
+                levelArray[x][y] = new Block("EMPTY");
             
+    }
+    public static void setArray(int x,int y, Block a){
+        levelArray[x][y] = a;
+    }
+    public static void moveUp(){
+        for(int x = 0;x<levelArray.length;x++)
+            for(int y=1; y<levelArray[0].length;y++){
+                levelArray[x][y-1] = levelArray[x][y];
+            }
     }
 }
