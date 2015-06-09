@@ -9,6 +9,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-class GUIPanel extends JPanel implements ActionListener {
+class GUIPanel extends JPanel implements ActionListener, MouseListener {
 
     private final int MAPX_SIZE = Board.WIDTH;
     private final int MAPY_SIZE = Board.HEIGHT;
@@ -30,6 +31,7 @@ class GUIPanel extends JPanel implements ActionListener {
     public GUIPanel() {
         setBorder(BorderFactory.createLineBorder(Color.black));
         addKeyListener(new TAdapter());
+        addMouseListener(this);
         setFocusable(true);
         decreaseTime();
 
@@ -97,11 +99,36 @@ class GUIPanel extends JPanel implements ActionListener {
         //Draws a String, centered at the bottom of the window
 
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent ae) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void mouseClicked(MouseEvent me) {
+        System.out.println("...");
+    }
+
+    @Override
+    public void mousePressed(MouseEvent me) {
+       
+    }
+    @Override
+    public void mouseReleased(MouseEvent me) {
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent me) {
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mouseExited(MouseEvent me) {
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+   
 
     private class TAdapter extends KeyAdapter {
 
