@@ -60,11 +60,15 @@ public class Board extends Applet {
     }
 
     public static void generateRow() {
+        /* This Checks for three in a row when you generate a new row.
+         * Looks weird, just checks the last to indicies and if the macth, if they
+         * do, it doesn't allow for a block with the same color to be created
+         */
         for (int x = 0; x < MAX_X; x++) {
-            if (x >= 2 && (levelArray[x - 1][MAX_Y - 1].color
-                    == levelArray[x - 2][MAX_Y - 1].color)) {
+            if (x > 2 && (levelArray[x - 1][MAX_Y - 1].color
+              == levelArray[x - 2][MAX_Y - 1].color)) {
                 while ((levelArray[x][MAX_Y - 1] = new Block()).color
-                        == levelArray[x - 2][MAX_Y - 1].color) {
+                  == levelArray[x - 1][MAX_Y - 1].color) {
                     levelArray[x][MAX_Y - 1] = null;
                     levelArray[x][MAX_Y - 1] = new Block();
                 }
