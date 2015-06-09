@@ -107,7 +107,10 @@ class GUIPanel extends JPanel implements ActionListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent me) {
-        System.out.println("...");
+      //  for(int x=0;x<Board.levelArray.length;x++)
+        //   for(int y=0;y<Board.levelArray[0].length;y++)
+         //        System.out.println(x + "" + y);
+        //me.getX() me.getY();
     }
 
     @Override
