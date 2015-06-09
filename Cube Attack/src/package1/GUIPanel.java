@@ -7,22 +7,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
 class GUIPanel extends JPanel implements ActionListener, MouseListener {
 
     private final int MAPX_SIZE = Board.WIDTH;
     private final int MAPY_SIZE = Board.HEIGHT;
-    private final int imgSize = 50;
+    private final int BLOCK_SIZE = 50;
     private String timeStr = "Time: ";
     private static int timeLeft = 10000;
     private static boolean gameOver = false;
@@ -77,9 +76,9 @@ class GUIPanel extends JPanel implements ActionListener, MouseListener {
         // Draw Text
 
         
-        for (int i = 0; i < MAPY_SIZE/imgSize; i++) {
-            g.drawLine(imgSize * i, 0, imgSize * i, MAPY_SIZE);
-            g.drawLine(0, imgSize * i, MAPX_SIZE, imgSize * i);
+        for (int i = 0; i < MAPY_SIZE/BLOCK_SIZE; i++) {
+            g.drawLine(BLOCK_SIZE * i, 0, BLOCK_SIZE * i, MAPY_SIZE);
+            g.drawLine(0, BLOCK_SIZE * i, MAPX_SIZE, BLOCK_SIZE * i);
 
         }
         for(int x=0;x<Board.levelArray.length;x++)
@@ -87,7 +86,7 @@ class GUIPanel extends JPanel implements ActionListener, MouseListener {
             for(int y=0;y<Board.levelArray[0].length;y++)
             {
                 if(Board.levelArray[x][y] instanceof Block)
-                    g.drawImage(Board.levelArray[x][y].getImage(), imgSize*x, imgSize*y, this);
+                    g.drawImage(Board.levelArray[x][y].getImage(), BLOCK_SIZE*x, BLOCK_SIZE*y, this);
             //block.x = 50*i
             //block.y = 50*j
             //<hittest> : if(blocks[i].x - blocks[i+1].x < Block.WIDTH)
@@ -107,10 +106,21 @@ class GUIPanel extends JPanel implements ActionListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent me) {
-      //  for(int x=0;x<Board.levelArray.length;x++)
-        //   for(int y=0;y<Board.levelArray[0].length;y++)
-         //        System.out.println(x + "" + y);
-        //me.getX() me.getY();
+			int x = me.getX() - (me.getX() % BLOCK_SIZE);
+			x /= BLOCK_SIZE;
+			int y = me.getY() - (me.getX() % BLOCK_SIZE);
+			y /= BLOCK_SIZE;
+			/** THIS WILL BE USED TO MOVE BLOCKS DOWN, HERE FOR TESTING
+			 ** WILL BE PUT ELSEWHERE
+			 **/
+			Board.levelArray[x][y] = null;
+			Board.levelArray[x][y] = new Block("EMPTY");
+			Board.levelArray[x][y - 1] = new Block("EMPTY");
+			
+			for(int i = 2; i > 0; i--)
+				for(int j = y; j > 0; j-- )
+					Board.levelArray[x][j] = Board.levelArray[x][j - 1];
+			
     }
 
     @Override

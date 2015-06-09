@@ -2,12 +2,6 @@ package package1;
 
 import java.applet.*;
 import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.*;
 import javax.swing.*;
 
 public class Board extends Applet {
@@ -77,4 +71,19 @@ public class Board extends Applet {
             }
         }
     }
+
+
+		public static void fallingBlocks()
+		{
+			for(int x = MAX_X - 1; x >= 0; x--)
+			{
+				for(int y = MAX_Y - 2; x >= 0; y--)
+				{
+					if(levelArray[x][y].color == "EMPTY")
+					{
+						;
+					}
+				}
+			}
+		}
 }
