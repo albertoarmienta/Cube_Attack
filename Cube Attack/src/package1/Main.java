@@ -1,6 +1,6 @@
 /*
  * Cube Attack
- * v0.0.0
+ * v0.0.1
  * Spigno/Armienta
  */
 
@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
        Board game = new Board();
     }
     
