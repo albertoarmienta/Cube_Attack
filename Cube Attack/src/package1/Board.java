@@ -59,7 +59,7 @@ public class Board extends Applet {
          * do, it doesn't allow for a block with the same color to be created
          */
         for (int x = 0; x < MAX_X; x++) {
-            if (x > 2 && (levelArray[x - 1][MAX_Y - 1].color
+            if (x >= 2 && (levelArray[x - 1][MAX_Y - 1].color
               == levelArray[x - 2][MAX_Y - 1].color)) {
                 while ((levelArray[x][MAX_Y - 1] = new Block()).color
                   == levelArray[x - 1][MAX_Y - 1].color) {
