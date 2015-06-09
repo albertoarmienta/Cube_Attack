@@ -12,14 +12,13 @@ import javax.swing.*;
 
 public class Board extends Applet {
     public static final int WIDTH = 400 , HEIGHT = 800;
-    public static Block[][] levelArray = new Block[8][16];
+		/* SIZE OF THE GRID */
+		public static final int MAX_X = 8, MAX_Y = 16;
+    public static Block[][] levelArray = new Block[MAX_X][MAX_Y];
     
      public Board(){
         resetArray();
-        setArray(4,15,new Block("BLUE"));
-        setArray(3,15,new Block("RED"));
-        setArray(2,15,new Block("BLACK"));
-        setArray(1,14,new Block("WHITE"));
+				generateRow();
         JFrame frame = buildFrame(); 
      }
     public JFrame buildFrame(){
@@ -49,5 +48,25 @@ public class Board extends Applet {
             for(int y=1; y<levelArray[0].length;y++){
                 levelArray[x][y-1] = levelArray[x][y];
             }
+				generateRow();
     }
+
+		public static void generateRow()
+		{
+			for(int x = 0; x < MAX_X; x++)	
+			{
+				if(x >= 2 && (levelArray[x - 1][MAX_Y - 1].color == 
+								levelArray[x - 2][MAX_Y - 1].color))
+				{
+					while((levelArray[x][MAX_Y - 1] = new Block()).color == 
+									levelArray[x - 2][MAX_Y - 1].color)	
+					{
+						levelArray[x][MAX_Y - 1] = null;
+						levelArray[x][MAX_Y - 1] = new Block();
+					}
+				}
+				else
+					levelArray[x][MAX_Y - 1] = new Block();
+			}
+		}
 }
