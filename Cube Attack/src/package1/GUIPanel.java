@@ -80,20 +80,21 @@ class GUIPanel extends JPanel implements ActionListener {
             g.drawLine(0, imgSize * i, MAPX_SIZE, imgSize * i);
 
         }
-        Block[][] blocks = new Block[8][7];
-        for(int i=0;i<blocks.length;i++)
+        for(int i=0;i<Board.levelArray.length;i++)
         {
-            for(int j=0;j<blocks[0].length;j++)
+            for(int j=0;j<Board.levelArray[0].length;j++)
             {
-            g.drawImage(Block.image.getImage(), 50*i, 50*j, this);
+                if(Board.levelArray[i][j] instanceof Block)
+                    g.drawImage(Board.levelArray[i][j].getImage(), 50*i, 50*j, this);
             //block.x = 50*i
             //block.y = 50*j
             //<hittest> : if(blocks[i].x - blocks[i+1].x < Block.WIDTH)
             }
         }
         g.setFont(new Font("Times New Roman", Font.ITALIC, 24));
-        g.setColor(Color.white);
-        g.drawString(this.timeStr + (this.timeLeft / 1000) + "." + (this.timeLeft % 1000 / 100), this.MAPX_SIZE / 2 - 50, this.MAPY_SIZE - 20);
+        g.setColor(Color.black);
+        //g.drawString(this.timeStr + (this.timeLeft / 1000) + "." + (this.timeLeft % 1000 / 100), this.MAPX_SIZE / 2 - 50, this.MAPY_SIZE - 20);
+        //Draws a String, centered at the bottom of the window
 
     }
 

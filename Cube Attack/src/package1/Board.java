@@ -11,13 +11,16 @@ import javax.imageio.*;
 import javax.swing.*;
 
 public class Board extends Applet {
-    public static final int WIDTH = 407 , HEIGHT = 840;
-  
-    JFrame frame = buildFrame();
-     
+    public static final int WIDTH = 400 , HEIGHT = 800;
+    public static Block[][] levelArray = new Block[8][16];
+    
+     public Board(){
+        resetArray();
+        JFrame frame = buildFrame(); 
+     }
     public JFrame buildFrame(){
         JFrame window = new JFrame("Cube Attack");
-        window.setPreferredSize(new Dimension (WIDTH,HEIGHT));
+        window.setSize(new Dimension (WIDTH,HEIGHT));
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         //window.setLocationRelativeTo(null);
@@ -27,5 +30,11 @@ public class Board extends Applet {
         window.pack();
         window.setVisible(true);
         return window;
+    }
+    public void resetArray(){
+        for(int i = 0; i<levelArray.length;i++)
+            for(int j=0; j<levelArray[0].length;j++)
+                levelArray[i][j] = new Block("EMPTY");
+            
     }
 }
