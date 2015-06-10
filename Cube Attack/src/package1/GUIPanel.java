@@ -159,6 +159,8 @@ class GUIPanel extends JPanel implements ActionListener, MouseListener {
                     break;
                 case KeyEvent.VK_SPACE:
                     Board.levelCursor.swapTargets();
+                    Board.adjacencyCheck(Board.levelCursor.getTarget1x(), Board.levelCursor.getTargety());
+                    Board.adjacencyCheck(Board.levelCursor.getTarget2x(), Board.levelCursor.getTargety());
                     break;
                 case KeyEvent.VK_UP:
                     Board.levelCursor.moveUp();
