@@ -107,21 +107,12 @@ class GUIPanel extends JPanel implements ActionListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent me) {
+			/*
 			int x = me.getX() - (me.getX() % BLOCK_SIZE);
 			x /= BLOCK_SIZE;
 			int y = me.getY() - (me.getX() % BLOCK_SIZE);
 			y /= BLOCK_SIZE;
-			/** THIS WILL BE USED TO MOVE BLOCKS DOWN, HERE FOR TESTING
-			 ** WILL BE PUT ELSEWHERE
-			 **/
-			Board.levelArray[x][y] = null;
-			Board.levelArray[x][y] = new Block("EMPTY");
-			Board.levelArray[x][y - 1] = new Block("EMPTY");
-			
-			for(int i = 2; i > 0; i--)
-				for(int j = y; j > 0; j-- )
-					Board.levelArray[x][j] = Board.levelArray[x][j - 1];
-			
+							*/
     }
 
     @Override

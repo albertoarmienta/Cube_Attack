@@ -54,22 +54,21 @@ public class Cursor {
         Board.levelArray[cursor_x_right][cursor_y] = temp;
 
 				/*Count is one because you only moved horizontal*/
-				/*if(Board.levelArray[cursor_x_right][cursor_y].color == "EMPTY" )
+				if(Board.levelArray[cursor_x_right][cursor_y].color == "EMPTY" )
 					Board.fallingBlocks(cursor_x_right, cursor_y, 1);
 				else if(Board.levelArray[cursor_x_left][cursor_y].color == "EMPTY" )
 					Board.fallingBlocks(cursor_x_left, cursor_y, 1);
 
-				if(Board.levelArray[cursor_x_right][cursor_y + 1].color == "EMPTY")
+				if(cursor_y < (Board.MAX_Y - 1) && Board.levelArray[cursor_x_right][cursor_y + 1].color == "EMPTY")
 				{
 					System.out.println("tits right");
 					Board.fallingBlocks(cursor_x_right, cursor_y, 1);
 				}
-				else if(Board.levelArray[cursor_x_left][cursor_y + 1].color == "EMPTY")
+				else if(cursor_y < (Board.MAX_Y - 1) && Board.levelArray[cursor_x_left][cursor_y + 1].color == "EMPTY")
 				{
 					System.out.println("tits left");
 					Board.fallingBlocks(cursor_x_left, cursor_y, 1);
 				}
-				*/
     }
     public Image getImage(){
         return image;
