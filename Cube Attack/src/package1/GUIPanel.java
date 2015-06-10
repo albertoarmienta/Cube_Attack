@@ -92,6 +92,7 @@ class GUIPanel extends JPanel implements ActionListener, MouseListener {
             //<hittest> : if(blocks[i].x - blocks[i+1].x < Block.WIDTH)
             }
         }
+        g.drawImage(Board.levelCursor.getImage(), Board.levelCursor.getTarget1x()*BLOCK_SIZE, Board.levelCursor.getTargety()*BLOCK_SIZE, this);
         g.setFont(new Font("Times New Roman", Font.ITALIC, 24));
         g.setColor(Color.black);
         //g.drawString(this.timeStr + (this.timeLeft / 1000) + "." + (this.timeLeft % 1000 / 100), this.MAPX_SIZE / 2 - 50, this.MAPY_SIZE - 20);
@@ -152,8 +153,26 @@ class GUIPanel extends JPanel implements ActionListener, MouseListener {
         public void keyPressed(KeyEvent e) {
 
             int key = e.getKeyCode();
-            if(key == 32)
-                Board.moveUp();
+            switch(key){
+                case KeyEvent.VK_ENTER:
+                    Board.moveUp();
+                    break;
+                case KeyEvent.VK_SPACE:
+                    Board.levelCursor.swapTargets();
+                    break;
+                case KeyEvent.VK_UP:
+                    Board.levelCursor.moveUp();
+                    break;
+                case KeyEvent.VK_DOWN:
+                    Board.levelCursor.moveDown();
+                    break;
+                case KeyEvent.VK_LEFT:
+                    Board.levelCursor.moveLeft();
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    Board.levelCursor.moveRight();
+                    break;
+            }
             
         }
     }

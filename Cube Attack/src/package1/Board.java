@@ -10,6 +10,7 @@ public class Board extends Applet {
     /* SIZE OF THE GRID */
     public static final int MAX_X = 8, MAX_Y = 16;
     public static Block[][] levelArray = new Block[MAX_X][MAX_Y];
+    public static Cursor levelCursor = new Cursor();
 
     public Board() {
         resetArray();
