@@ -23,7 +23,7 @@ public class Board extends Applet {
 		window.setSize(new Dimension(WIDTH, HEIGHT));
 		window.setResizable(false);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//window.setLocationRelativeTo(null);
+		window.setLocationRelativeTo(null);
 		GUIPanel panel = new GUIPanel();
 		window.getContentPane().add(panel);
 		//window.getContentPane().add(label,BorderLayout.CENTER);
