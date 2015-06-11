@@ -61,12 +61,10 @@ public class Cursor {
 
 				if(cursor_y < (Board.MAX_Y - 1) && Board.levelArray[cursor_x_right][cursor_y + 1].color == "EMPTY")
 				{
-					System.out.println("tits right");
 					Board.fallingBlocks(cursor_x_right, cursor_y, 1);
 				}
 				else if(cursor_y < (Board.MAX_Y - 1) && Board.levelArray[cursor_x_left][cursor_y + 1].color == "EMPTY")
 				{
-					System.out.println("tits left");
 					Board.fallingBlocks(cursor_x_left, cursor_y, 1);
 				}
     }

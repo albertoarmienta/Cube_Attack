@@ -68,7 +68,7 @@ class GUIPanel extends JPanel implements ActionListener, MouseListener {
             public void run() {
              repaint();
             }
-        }, 0, 100, TimeUnit.MILLISECONDS);
+        }, 0, 10, TimeUnit.MILLISECONDS);
     }
 
     public void paintComponent(Graphics g) {

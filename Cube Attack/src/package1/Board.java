@@ -120,10 +120,6 @@ public class Board extends Applet {
 		y=yref;
 		//Removal Time...
 		if (numSameL + numSameR >= 2) {
-			System.out.println("LEFT: " + numSameL);
-			System.out.println("RIGHT: " + numSameR);
-			System.out.println("x: " + x);
-			System.out.println("y: " + y);
 			while (numSameL > 0) {
 				Board.levelArray[x - numSameL][y] = null;
 				Board.levelArray[x - numSameL][y] = new Block("EMPTY");
@@ -140,8 +136,6 @@ public class Board extends Applet {
 		}
 		if (numSameU + numSameD >= 2) {
 			tempUp = yref - numSameU - 1;
-			System.out.println("UP: " + numSameU);
-			System.out.println("DOWN: " + numSameD);
 			while (numSameU > 0) {
 				Board.levelArray[x][y - numSameU] = null;
 				Board.levelArray[x][y - numSameU] = new Block("EMPTY");
