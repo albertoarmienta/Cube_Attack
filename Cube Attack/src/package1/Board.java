@@ -171,16 +171,22 @@ public class Board extends Applet {
 		//for(int j = y; j > 0; j-- )
 		//	levelArray[x][j] = levelArray[x][j - 1];
 		
-		if (levelArray[x][y].color == "EMPTY") {
+		if (y > 0 && levelArray[x][y].color == "EMPTY") {
 			while (y < (MAX_Y) && levelArray[x][y].color == "EMPTY") {
 				for (int j = y; j > 0; j--) {
 					levelArray[x][j] = levelArray[x][j - 1];
+					if((j - 1) == 0)
+					{
+						levelArray[x][0] = null;
+						levelArray[x][0] = new Block("EMPTY");
+
+					}
 				}
 				y += 1;
 			}
 		} else {
 			while (y < (MAX_Y - 1) && levelArray[x][y + 1].color == "EMPTY") {
-				for (int j = y; j > 0; j--) {
+				for (int j = y; j >= 0; j--) {
 					Block temp = levelArray[x][j + 1];
 					levelArray[x][j + 1] = levelArray[x][j];
 					levelArray[x][j] = temp;
@@ -188,7 +194,6 @@ public class Board extends Applet {
 				y += 1;
 			}
 		}
-		//adjacencyCheck(ref_x, ref_y);
 
 		
 	}
