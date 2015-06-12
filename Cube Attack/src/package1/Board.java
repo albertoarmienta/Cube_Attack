@@ -135,7 +135,7 @@ public class Board extends Applet {
                 //Board.levelArray[x - numSameL][y] = new Block("EMPTY");
                 Board.levelArray[x - numSameL][y].nextSprite();
                 //removeBlock(x - numSameL,y);
-                fallingBlocks(x - numSameL, y, 1);
+                //fallingBlocks(x - numSameL, y, 1);
                 numSameL--;
             }
             while (numSameR > 0) {
@@ -143,7 +143,7 @@ public class Board extends Applet {
                 //Board.levelArray[x + numSameR][y] = new Block("EMPTY");
                 Board.levelArray[x + numSameR][y].nextSprite();
                 //removeBlock(x + numSameL,y);
-                fallingBlocks(x + numSameR, y, 1);
+                //fallingBlocks(x + numSameR, y, 1);
                 numSameR--;
             }
             deleteOrigin = true;
@@ -172,8 +172,8 @@ public class Board extends Applet {
             //Board.levelArray[x][y] = new Block("EMPTY");
             Board.levelArray[x][y].nextSprite();
             //removeBlock(x,y);
-            fallingBlocks(x, tempUp, 1);
-            fallingBlocks(x, y, 1);
+            //fallingBlocks(x, tempUp, 1);
+            //fallingBlocks(x, y, 1);
         }
     }
 
@@ -236,7 +236,7 @@ public class Board extends Applet {
                 }
                 y += 1;
             }
-						adjacencyCheck(x, y - 1);
+						adjacencyCheck(x, y );
         }
 
     }
