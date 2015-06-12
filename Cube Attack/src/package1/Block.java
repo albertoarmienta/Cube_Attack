@@ -9,7 +9,8 @@ public class Block extends Rectangle{
 	private ImageIcon imageIcon;
 	private Image image;
 	public String color;
-	
+	public int delayTime  = 10;
+        public Boolean needsRemoval = false;
 	public Block(String color) {
 		this.color = color;
 		switch (color) {
@@ -70,7 +71,7 @@ public class Block extends Rectangle{
 	}
 	
 	
-	public void nextSpite(){
+	public void nextSprite(){
             switch (color) {
 			case "RED":
 				imageIcon = new ImageIcon("src/resources/RED_2.png");
@@ -92,6 +93,7 @@ public class Block extends Rectangle{
 				break;
 		}
 		image = imageIcon.getImage();
+                needsRemoval = true;
         }
 	public Image getImage() {
 		return image;
