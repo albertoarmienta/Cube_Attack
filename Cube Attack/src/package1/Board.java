@@ -78,6 +78,9 @@ public class Board extends Applet {
                 levelArray[x][MAX_Y - 1] = new Block();
             }
         }
+
+				for(int x = 0; x < MAX_X; x++)
+					adjacencyCheck(x, MAX_Y - 1);
     }
 
     public static void adjacencyCheck(int x, int y) {
@@ -138,7 +141,7 @@ public class Board extends Applet {
             while (numSameR > 0) {
 				//Board.levelArray[x + numSameR][y] = null;
                 //Board.levelArray[x + numSameR][y] = new Block("EMPTY");
-                Board.levelArray[x + numSameL][y].nextSprite();
+                Board.levelArray[x + numSameR][y].nextSprite();
                 //removeBlock(x + numSameL,y);
                 fallingBlocks(x + numSameR, y, 1);
                 numSameR--;
@@ -208,8 +211,10 @@ public class Board extends Applet {
         //	levelArray[x][j] = levelArray[x][j - 1];
 
         if (y > 0 && levelArray[x][y].color == "EMPTY") {
-            while (y < (MAX_Y) && levelArray[x][y].color == "EMPTY") {
-                for (int j = y; j > 0; j--) {
+            while (y < (MAX_Y) && levelArray[x][y].color == "EMPTY") 
+						{
+                for (int j = y; j > 0; j--) 
+								{
                     levelArray[x][j] = levelArray[x][j - 1];
                     if ((j - 1) == 0) {
                         levelArray[x][0] = null;
@@ -219,15 +224,19 @@ public class Board extends Applet {
                 }
                 y += 1;
             }
+						adjacencyCheck(x, y - 1);
         } else {
-            while (y < (MAX_Y - 1) && levelArray[x][y + 1].color == "EMPTY") {
-                for (int j = y; j >= 0; j--) {
+            while (y < (MAX_Y - 1) && levelArray[x][y + 1].color == "EMPTY")
+						{
+                for (int j = y; j >= 0; j--)
+								{
                     Block temp = levelArray[x][j + 1];
                     levelArray[x][j + 1] = levelArray[x][j];
                     levelArray[x][j] = temp;
                 }
                 y += 1;
             }
+						adjacencyCheck(x, y - 1);
         }
 
     }

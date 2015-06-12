@@ -10,7 +10,7 @@ public class Block extends Rectangle{
 	private Image image;
 	public String color;
 	public int delayTime  = 10;
-        public Boolean needsRemoval = false;
+	public Boolean needsRemoval = false;
 	public Block(String color) {
 		this.color = color;
 		switch (color) {
@@ -20,17 +20,17 @@ public class Block extends Rectangle{
 			case "BLUE":
 				imageIcon = new ImageIcon("src/resources/BLUE.png");
 				break;
-                        case "GREEN":
-                                imageIcon = new ImageIcon("src/resources/GREEN.png");
-                                break;
+			case "GREEN":
+				imageIcon = new ImageIcon("src/resources/GREEN.png");
+				break;
 			case "WHITE":
 				imageIcon = new ImageIcon("src/resources/WHITE.png");
 				break;
 			case "BLACK":
 				imageIcon = new ImageIcon("src/resources/BLACK.png");
 				break;
-                        case "EXCLAM":
-                                imageIcon = new ImageIcon("src/resources/EXCLAM.png");
+			case "EXCLAM":
+				imageIcon = new ImageIcon("src/resources/EXCLAM.png");
 				break;
 			case "EMPTY":
 				imageIcon = new ImageIcon("src/resources/empty.png");
@@ -43,58 +43,58 @@ public class Block extends Rectangle{
 	public Block ()
 	{
 		int random = (int)(Math.random()*26);
-			if(random<5){
-				imageIcon = new ImageIcon("src/resources/RED.png");
-				this.color = "RED";
-                        }
-                        else if(random<10){
-				imageIcon = new ImageIcon("src/resources/BLUE.png");
-				this.color = "BLUE";
-                        }
-			else if(random<15){
-				imageIcon = new ImageIcon("src/resources/WHITE.png");
-				this.color  = "WHITE";
-                        }
-			else if(random<20){
-				imageIcon = new ImageIcon("src/resources/BLACK.png");
-				this.color = "BLACK";
-                        }
-                        else if(random<25){
-                                imageIcon = new ImageIcon("src/resources/GREEN.png");
-                                this.color = "GREEN";
-                        }
-                        else if(random==25){
-                                imageIcon = new ImageIcon("src/resources/EXCLAM.png");
-                                this.color = "EXCLAM";
-                        }
+		if(random<5){
+			imageIcon = new ImageIcon("src/resources/RED.png");
+			this.color = "RED";
+		}
+		else if(random<10){
+			imageIcon = new ImageIcon("src/resources/BLUE.png");
+			this.color = "BLUE";
+		}
+		else if(random<15){
+			imageIcon = new ImageIcon("src/resources/WHITE.png");
+			this.color  = "WHITE";
+		}
+		else if(random<20){
+			imageIcon = new ImageIcon("src/resources/BLACK.png");
+			this.color = "BLACK";
+		}
+		else if(random<25){
+			imageIcon = new ImageIcon("src/resources/GREEN.png");
+			this.color = "GREEN";
+		}
+		else if(random==25){
+			imageIcon = new ImageIcon("src/resources/EXCLAM.png");
+			this.color = "EXCLAM";
+		}
 		image = imageIcon.getImage();
 	}
 	
 	
 	public void nextSprite(){
-            switch (color) {
+		switch (color) {
 			case "RED":
 				imageIcon = new ImageIcon("src/resources/RED_2.png");
 				break;
 			case "BLUE":
 				imageIcon = new ImageIcon("src/resources/BLUE_2.png");
 				break;
-                        case "GREEN":
-                                imageIcon = new ImageIcon("src/resources/GREEN_2.png");
-                                break;
+			case "GREEN":
+				imageIcon = new ImageIcon("src/resources/GREEN_2.png");
+				break;
 			case "WHITE":
 				imageIcon = new ImageIcon("src/resources/WHITE_2.png");
 				break;
 			case "BLACK":
 				imageIcon = new ImageIcon("src/resources/BLACK_2.png");
 				break;
-			 case "EXCLAM":
-                                imageIcon = new ImageIcon("src/resources/EXCLAM_2.png");
+			case "EXCLAM":
+				imageIcon = new ImageIcon("src/resources/EXCLAM_2.png");
 				break;
 		}
 		image = imageIcon.getImage();
-                needsRemoval = true;
-        }
+		needsRemoval = true;
+	}
 	public Image getImage() {
 		return image;
 	}
@@ -102,5 +102,5 @@ public class Block extends Rectangle{
 	public String getColor() {
 		return color;
 	}
-
+	
 }
