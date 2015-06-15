@@ -71,29 +71,39 @@ public class Block extends Rectangle{
 	}
 	
 	
-	public void nextSprite(){
-		switch (color) {
-			case "RED":
-				imageIcon = new ImageIcon("src/resources/RED_2.png");
-				break;
-			case "BLUE":
-				imageIcon = new ImageIcon("src/resources/BLUE_2.png");
-				break;
-			case "GREEN":
-				imageIcon = new ImageIcon("src/resources/GREEN_2.png");
-				break;
-			case "WHITE":
-				imageIcon = new ImageIcon("src/resources/WHITE_2.png");
-				break;
-			case "BLACK":
-				imageIcon = new ImageIcon("src/resources/BLACK_2.png");
-				break;
-			case "EXCLAM":
-				imageIcon = new ImageIcon("src/resources/EXCLAM_2.png");
-				break;
+	public boolean nextSprite(){
+		if(!needsRemoval)
+		{
+			switch (color) {
+				case "RED":
+					imageIcon = new ImageIcon("src/resources/RED_2.png");
+					break;
+				case "BLUE":
+					imageIcon = new ImageIcon("src/resources/BLUE_2.png");
+					break;
+				case "GREEN":
+					imageIcon = new ImageIcon("src/resources/GREEN_2.png");
+					break;
+				case "WHITE":
+					imageIcon = new ImageIcon("src/resources/WHITE_2.png");
+					break;
+				case "BLACK":
+					imageIcon = new ImageIcon("src/resources/BLACK_2.png");
+					break;
+				case "EXCLAM":
+					imageIcon = new ImageIcon("src/resources/EXCLAM_2.png");
+					break;
+			}
+		needsRemoval = true;
+		}
+		else
+		{
+			color = "EMPTY";
+			imageIcon = new ImageIcon("src/resources/empty.png");
+			needsRemoval = false;
 		}
 		image = imageIcon.getImage();
-		needsRemoval = true;
+		return !needsRemoval;
 	}
 	public Image getImage() {
 		return image;
