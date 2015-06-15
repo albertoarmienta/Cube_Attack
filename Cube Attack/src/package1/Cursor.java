@@ -17,13 +17,13 @@ public class Cursor {
         cursor_x_right = 1;
         cursor_y = Board.MAX_Y - 1;
     }
-    public int getTarget1x(){
+    public int getCursorx(){
         return cursor_x_left;
     }
-    public int getTarget2x(){
+    public int getCursor2x(){
         return cursor_x_right;
     }
-    public int getTargety(){
+    public int getCursory(){
         return cursor_y;
     }
     public void moveLeft(){
@@ -47,26 +47,6 @@ public class Cursor {
         if(cursor_y<Board.MAX_Y-1){
             cursor_y++;
         }
-    }
-    public void swapTargets(){
-        Block temp = Board.levelArray[cursor_x_left][cursor_y];
-        Board.levelArray[cursor_x_left][cursor_y] = Board.levelArray[cursor_x_right][cursor_y];
-        Board.levelArray[cursor_x_right][cursor_y] = temp;
-
-				/*Count is one because you only moved horizontal*/
-				if(Board.levelArray[cursor_x_right][cursor_y].color == "EMPTY" )
-					Board.fallingBlocks(cursor_x_right, cursor_y, 1);
-				else if(Board.levelArray[cursor_x_left][cursor_y].color == "EMPTY" )
-					Board.fallingBlocks(cursor_x_left, cursor_y, 1);
-
-				if(cursor_y < (Board.MAX_Y - 1) && Board.levelArray[cursor_x_right][cursor_y + 1].color == "EMPTY")
-				{
-					Board.fallingBlocks(cursor_x_right, cursor_y, 1);
-				}
-				else if(cursor_y < (Board.MAX_Y - 1) && Board.levelArray[cursor_x_left][cursor_y + 1].color == "EMPTY")
-				{
-					Board.fallingBlocks(cursor_x_left, cursor_y, 1);
-				}
     }
     public Image getImage(){
         return image;

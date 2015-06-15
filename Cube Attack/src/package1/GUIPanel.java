@@ -1,169 +1,88 @@
 package package1;
-import java.awt.Color;
+
+import java.applet.Applet;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
-class GUIPanel extends JPanel implements ActionListener, MouseListener {
 
-    private final int MAPX_SIZE = Board.WIDTH;
-    private final int MAPY_SIZE = Board.HEIGHT;
-    private final int BLOCK_SIZE = 50;
-    private String timeStr = "Time: ";
-    private static int timeLeft = 10000;
-    private static boolean gameOver = false;
-    private static boolean gameStarted = false;
-
-    public GUIPanel() {
-        setBorder(BorderFactory.createLineBorder(Color.black));
-        addKeyListener(new TAdapter());
-        addMouseListener(this);
+class GUIPanel extends Applet implements ActionListener{
+    public final int WIDTH = 1005, HEIGHT = 829;
+    public Board b1;
+    public Board b2;
+    public JLabel banner;
+    public GUIPanel() 
+    {
+        JFrame game = buildFrame();
         setFocusable(true);
-        decreaseTime();
-
+        game.addKeyListener(new TAdapter());
+        b1 = new Board();
+        b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
+        b2 = new Board();
+        b2.setBounds(b2.WIDTH + 200,0,b2.WIDTH,b2.HEIGHT);
+        banner = new JLabel();
+        banner.setBounds(b1.WIDTH, 0, WIDTH-b1.WIDTH-b2.WIDTH,b1.HEIGHT);
+        banner.setIcon(new ImageIcon("src/resources/BANNER.png"));
+        System.out.println(banner.getBounds());
+        game.getContentPane().add(banner);
+        game.getContentPane().add(b1);
+        game.getContentPane().add(b2);
+        game.setVisible(true);
     }
-
-    public static void addTime(int t) {
-        timeLeft += t;
-    }
-
-    public static int getTimeLeft() {
-        return timeLeft;
-    }
-
-    public static void resetTime() {
-        timeLeft = 10000;
-    }
-
-    public static void setGameStarted(boolean b) {
-        gameStarted = b;
-    }
-
-    public static void setGameOver(boolean b) {
-        gameOver = b;
-    }
-
-    public Dimension getPreferredSize() {
-        return new Dimension(MAPX_SIZE, MAPY_SIZE);
-    }
-
-    //
-    private void decreaseTime() {
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-             repaint();
-            }
-        }, 0, 10, TimeUnit.MILLISECONDS);
-    }
-
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        // Draw Text
-
+    public JFrame buildFrame() {
+        JFrame window = new JFrame("Cube Attack");
+        window.setLayout(null);
         
-        for (int i = 0; i < MAPY_SIZE/BLOCK_SIZE; i++) {
-            g.drawLine(BLOCK_SIZE * i, 0, BLOCK_SIZE * i, MAPY_SIZE);
-            g.drawLine(0, BLOCK_SIZE * i, MAPX_SIZE, BLOCK_SIZE * i);
-
-        }
-        for(int x=0;x<Board.levelArray.length;x++)
-        {
-            for(int y=0;y<Board.levelArray[0].length;y++)
-            {
-                if(Board.levelArray[x][y] instanceof Block)
-                    g.drawImage(Board.levelArray[x][y].getImage(), BLOCK_SIZE*x, BLOCK_SIZE*y, this);
-            //block.x = 50*i
-            //block.y = 50*j
-            //<hittest> : if(blocks[i].x - blocks[i+1].x < Block.WIDTH)
-            }
-        }
-        g.drawImage(Board.levelCursor.getImage(), Board.levelCursor.getTarget1x()*BLOCK_SIZE, Board.levelCursor.getTargety()*BLOCK_SIZE, this);
-        g.setFont(new Font("Times New Roman", Font.ITALIC, 24));
-        g.setColor(Color.black);
-        //g.drawString(this.timeStr + (this.timeLeft / 1000) + "." + (this.timeLeft % 1000 / 100), this.MAPX_SIZE / 2 - 50, this.MAPY_SIZE - 20);
-        //Draws a String, centered at the bottom of the window
-
+       // System.out.println(window.getLayout());
+        window.setPreferredSize(new Dimension( WIDTH, HEIGHT));
+        window.setResizable(false);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //window.setLocationRelativeTo(null);
+        
+        window.pack();
+        //window.setVisible(true);
+        return window;
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public void mouseClicked(MouseEvent me) {
-			/*
-			int x = me.getX() - (me.getX() % BLOCK_SIZE);
-			x /= BLOCK_SIZE;
-			int y = me.getY() - (me.getX() % BLOCK_SIZE);
-			y /= BLOCK_SIZE;
-							*/
-    }
-
-    @Override
-    public void mousePressed(MouseEvent me) {
-       
-    }
-    @Override
-    public void mouseReleased(MouseEvent me) {
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent me) {
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void mouseExited(MouseEvent me) {
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-   
-
-    private class TAdapter extends KeyAdapter {
+    
+ private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
             
         }
 
         public void keyPressed(KeyEvent e) {
-
             int key = e.getKeyCode();
             switch(key){
                 case KeyEvent.VK_ENTER:
-                    Board.moveUp();
+                    b1.moveUp();
+                    b2.moveUp();
                     break;
                 case KeyEvent.VK_SPACE:
-                    Board.levelCursor.swapTargets();
-                    Board.adjacencyCheck(Board.levelCursor.getTarget1x(), Board.levelCursor.getTargety());
-                    Board.adjacencyCheck(Board.levelCursor.getTarget2x(), Board.levelCursor.getTargety());
+                    b2.swapTargets();
+                    b2.adjacencyCheck( b2.levelCursor.getCursorx(),  b2.levelCursor.getCursory());
+                    b2.adjacencyCheck( b2.levelCursor.getCursor2x(),  b2.levelCursor.getCursory());
                     break;
                 case KeyEvent.VK_UP:
-                    Board.levelCursor.moveUp();
+                     b2.levelCursor.moveUp();
                     break;
                 case KeyEvent.VK_DOWN:
-                    Board.levelCursor.moveDown();
+                     b2.levelCursor.moveDown();
                     break;
                 case KeyEvent.VK_LEFT:
-                    Board.levelCursor.moveLeft();
+                     b2.levelCursor.moveLeft();
                     break;
                 case KeyEvent.VK_RIGHT:
-                    Board.levelCursor.moveRight();
+                     b2.levelCursor.moveRight();
                     break;
             }
             

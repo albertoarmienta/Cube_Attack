@@ -11,7 +11,8 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) {
-       Board game = new Board();
+       GUIPanel game = new GUIPanel();
     }
+    
     
 }
