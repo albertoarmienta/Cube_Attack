@@ -9,6 +9,7 @@ public class Block extends Rectangle{
 	private ImageIcon imageIcon;
 	private Image image;
 	public String color;
+        public int movesNeeded = 0;
 	public int delayTime  = 10;
 	public Boolean needsRemoval = false;
 	public Block(String color) {
