@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 public class Board extends JPanel {
-
     public static final int WIDTH = 400, HEIGHT = 800;
     /* SIZE OF THE GRID */
     public static final int MAX_X = 8, MAX_Y = 16;
@@ -333,5 +332,7 @@ public class Board extends JPanel {
         //Draws a String, centered at the bottom of the window
 
     }
-
 }
+
+	
+	
