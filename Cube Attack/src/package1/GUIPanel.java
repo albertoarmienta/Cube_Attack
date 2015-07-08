@@ -84,6 +84,8 @@ class GUIPanel extends Applet implements ActionListener{
                 case KeyEvent.VK_RIGHT:
                      b2.levelCursor.moveRight();
                     break;
+                case KeyEvent.VK_0:
+                    b2.shiftDown();
             }
             
         }
