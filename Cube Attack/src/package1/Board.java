@@ -190,8 +190,9 @@ public class Board extends JPanel {
                 for (int x = 0; x < levelArray.length; x++) {
                     for (int y = 0; y < levelArray[0].length; y++) {
                         if (levelArray[x][y].needsRemoval && levelArray[x][y].delayTime <= 0) {
-                            levelArray[x][y] = null;
+                            Block temp = levelArray[x][y] ;
                             levelArray[x][y] = new Block("EMPTY");
+														temp = null;
                         } else if (levelArray[x][y].needsRemoval) {
                             levelArray[x][y].delayTime--;
 
