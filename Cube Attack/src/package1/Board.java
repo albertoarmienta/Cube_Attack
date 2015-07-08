@@ -5,7 +5,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
-
 public class Board extends JPanel {
     public static final int WIDTH = 400, HEIGHT = 800;
     /* SIZE OF THE GRID */

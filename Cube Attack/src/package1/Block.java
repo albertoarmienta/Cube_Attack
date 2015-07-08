@@ -5,7 +5,6 @@ import java.awt.Rectangle;
 import javax.swing.ImageIcon;
 
 public class Block extends Rectangle{
-	
 	private ImageIcon imageIcon;
 	private Image image;
 	public String color;

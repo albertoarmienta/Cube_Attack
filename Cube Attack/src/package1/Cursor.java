@@ -1,9 +1,8 @@
 
 package package1;
-
 import java.awt.Image;
 import javax.swing.ImageIcon;
-
+//REVERSION
 public class Cursor {
     private int cursor_x_left;
     private int cursor_x_right;
