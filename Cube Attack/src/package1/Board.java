@@ -140,17 +140,11 @@ public class Board extends JPanel {
         //Removal Time...
         if (numSameL + numSameR >= 2) {
             while (numSameL > 0) {
-                //levelArray[x - numSameL][y] = null;
-                //levelArray[x - numSameL][y] = new Block("EMPTY");
                 levelArray[x - numSameL][y].nextSprite();
-                //removeBlock(x - numSameL,y);
                 numSameL--;
             }
             while (numSameR > 0) {
-                //levelArray[x + numSameR][y] = null;
-                //levelArray[x + numSameR][y] = new Block("EMPTY");
                 levelArray[x + numSameR][y].nextSprite();
-                //removeBlock(x + numSameL,y);
                 numSameR--;
             }
             deleteOrigin = true;
@@ -158,27 +152,18 @@ public class Board extends JPanel {
         if (numSameU + numSameD >= 2) {
             tempUp = yref - numSameU - 1;
             while (numSameU > 0) {
-                //levelArray[x][y - numSameU] = null;
-                //levelArray[x][y - numSameU] = new Block("EMPTY");
                 levelArray[x][y - numSameU].nextSprite();
-                //removeBlock(x,y - numSameU);
                 numSameU--;
             }
             while (numSameD > 0) {
-                //levelArray[x][y + numSameD] = null;
-                //levelArray[x][y + numSameD] = new Block("EMPTY");
                 levelArray[x][y + numSameD].nextSprite();
-                //removeBlock(x,y + numSameU);
                 numSameD--;
             }
 
             deleteOrigin = true;
         }
         if (deleteOrigin) {
-            //levelArray[x][y] = null;
-            //levelArray[x][y] = new Block("EMPTY");
             levelArray[x][y].nextSprite();
-            //removeBlock(x,y);
         }
     }
     private void removeBlock() {
@@ -247,8 +232,11 @@ public class Board extends JPanel {
         int x2 = levelCursor.getCursor2x();
         int y = levelCursor.getCursory();
         Block temp = levelArray[x1][y];
+				if(!temp.needsRemoval && !levelArray[x2][y].needsRemoval )
+				{
         levelArray[x1][y] = levelArray[x2][y];
         levelArray[x2][y] = temp;
+				}
     }
 
     public static void addTime(int t) {
