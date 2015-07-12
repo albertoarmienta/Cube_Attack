@@ -28,6 +28,7 @@ class GUIPanel extends Applet implements ActionListener{
         setFocusable(true);
         game.addKeyListener(new TAdapter());
         game.setVisible(true);
+        game.setLocationRelativeTo(null);
     }
     public JFrame buildFrame() {
         JFrame window = new JFrame("Cube Attack");
@@ -70,8 +71,8 @@ class GUIPanel extends Applet implements ActionListener{
             switch(key){
                 case KeyEvent.VK_ENTER:
                     if(gameState == 1){
-                    b1.moveUp();
-                    b2.moveUp();
+                    //b1.moveUp();
+                    //b2.moveUp();
                     }
                     else if(gameState==0)
                     {
