@@ -10,7 +10,7 @@ import javax.swing.*;
 public class Board extends JPanel {
 
     public static final int WIDTH = 400, HEIGHT = 800;
-    private JLabel background;
+    //private JLabel background;
     /* SIZE OF THE GRID */
     public static final int MAX_X = 8, MAX_Y = 16;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
@@ -24,6 +24,8 @@ public class Board extends JPanel {
     private static boolean gameOver = false;
     private static boolean gameStarted = false;
     private ScheduledExecutorService  moveUpThread;
+    private ImageIcon backgroundIcon = new ImageIcon("src/resources/background.jpg");
+    private Image background = backgroundIcon.getImage();
 
     int originalMoveUpTimer = 200;
     int moveUpTimer = originalMoveUpTimer;
@@ -32,19 +34,7 @@ public class Board extends JPanel {
     public static int moveUpOffSet = 0;
 
     public Board() {
-            /*
-        background = new JLabel();
-        background.setBounds(0, 0, WIDTH, HEIGHT);
-        background.setIcon(new ImageIcon("src/resources/background.jpg"));
-        background.setOpaque(false);
-        background.setLayout(new BorderLayout());
-        background.setVisible(true);
-        //add(background);
-        //repaint();
-            */
-
         setBorder(BorderFactory.createLineBorder(Color.black));
-        //setSize(new Dimension(WIDTH,HEIGHT));
         decreaseTime();
         resetArray();
         generateRow();
@@ -316,27 +306,34 @@ public class Board extends JPanel {
     }
     
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        // Draw Text
+        //Whatever is painted last appears on top of everything else
         
+        super.paintComponent(g);
+        
+        //Draws the background image at (0,0) of this board
+        g.drawImage(background, 0, 0, WIDTH, HEIGHT, this);
+       
+        //Draws vertica and horizantal lines to create a visual grid
         for (int i = 0; i < MAPY_SIZE / BLOCK_SIZE; i++) {
             g.drawLine(BLOCK_SIZE * i, 0, BLOCK_SIZE * i, MAPY_SIZE);
             g.drawLine(0, BLOCK_SIZE * i, MAPX_SIZE, BLOCK_SIZE * i);
             
         }
+        
+        //Draws the blocks
         for (int x = 0; x < levelArray.length; x++) {
             for (int y = 0; y < levelArray[0].length; y++) {
                 if (levelArray[x][y] instanceof Block) {
                     g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, this);
                 }
-                //block.x = 50*i
-                //block.y = 50*j
-                //<hittest> : if(blocks[i].x - blocks[i+1].x < Block.WIDTH)
+    
             }
         }
+        //Draws the cursor
         g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE - moveUpOffSet, this);
-        g.setFont(new Font("Times New Roman", Font.ITALIC, 24));
-        g.setColor(Color.black);
+        
+       // g.setFont(new Font("Times New Roman", Font.ITALIC, 24));
+       // g.setColor(Color.black);
         //g.drawString(this.timeStr + (this.timeLeft / 1000) + "." + (this.timeLeft % 1000 / 100), this.MAPX_SIZE / 2 - 50, this.MAPY_SIZE - 20);
         //Draws a String, centered at the bottom of the window
         

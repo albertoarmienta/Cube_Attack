@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 //REVERSION
 
 class GUIPanel extends Applet implements ActionListener{
-    public final int WIDTH = 1005, HEIGHT = 829;
+    public static final int WIDTH = 1005, HEIGHT = 829;
     public int gameState = 0;
     public Board b1;
     public Board b2;
