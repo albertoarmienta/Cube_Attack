@@ -10,6 +10,7 @@ import javax.swing.*;
 public class Board extends JPanel {
 
     public static final int WIDTH = 400, HEIGHT = 800;
+    private JLabel background;
     /* SIZE OF THE GRID */
     public static final int MAX_X = 8, MAX_Y = 16;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
@@ -24,12 +25,24 @@ public class Board extends JPanel {
     private static boolean gameStarted = false;
     private ScheduledExecutorService  moveUpThread;
 
-    // Has to be 0 for move up to work
     int originalMoveUpTimer = 200;
     int moveUpTimer = originalMoveUpTimer;
     public static boolean canMoveUp = true;
+    public static int moveUpInterval = 0;
+    public static int moveUpOffSet = 0;
 
     public Board() {
+            /*
+        background = new JLabel();
+        background.setBounds(0, 0, WIDTH, HEIGHT);
+        background.setIcon(new ImageIcon("src/resources/background.jpg"));
+        background.setOpaque(false);
+        background.setLayout(new BorderLayout());
+        background.setVisible(true);
+        //add(background);
+        //repaint();
+            */
+
         setBorder(BorderFactory.createLineBorder(Color.black));
         //setSize(new Dimension(WIDTH,HEIGHT));
         decreaseTime();
@@ -37,6 +50,7 @@ public class Board extends JPanel {
         generateRow();
         removeBlock();
         moveBlock();
+        moveUpInterval = (int)Math.ceil((float)originalMoveUpTimer / (float)BLOCK_SIZE);
         //moveUp();
     }
 
@@ -161,7 +175,7 @@ public class Board extends JPanel {
             deleteOrigin = true;
         }
         if (deleteOrigin) {
-            moveUpTimer = originalMoveUpTimer;
+            //moveUpTimer = originalMoveUpTimer;
             levelArray[x][y].nextSprite();
         }
     }
@@ -228,7 +242,7 @@ public class Board extends JPanel {
                     levelArray[x][y + 1] = levelArray[x][y];
                     levelArray[x][y] = temp;
                     moveUp = false;
-                    moveUpTimer = originalMoveUpTimer;
+                    //moveUpTimer = originalMoveUpTimer;
                 }
                 //Else if the current block is not EMPTY and the block below it is not EMPTY and the block is falling
                 else if (!"EMPTY".equals(levelArray[x][y+1].color) &&!"EMPTY".equals(levelArray[x][y].color) && levelArray[x][y].falling) {
@@ -284,10 +298,13 @@ public class Board extends JPanel {
             public void run() {
                 if(canMoveUp && moveUpTimer > 0)
                 {
+                    if(moveUpTimer % moveUpInterval == 0)
+                            moveUpOffSet += 1;
                     moveUpTimer -= 1;
                 }
                 else if (canMoveUp && moveUpTimer <= 0)
                 {
+                    moveUpOffSet = 0;
                     moveUpTimer = originalMoveUpTimer;
                     moveUp();
                     generateRow();
@@ -310,14 +327,14 @@ public class Board extends JPanel {
         for (int x = 0; x < levelArray.length; x++) {
             for (int y = 0; y < levelArray[0].length; y++) {
                 if (levelArray[x][y] instanceof Block) {
-                    g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y, this);
+                    g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, this);
                 }
                 //block.x = 50*i
                 //block.y = 50*j
                 //<hittest> : if(blocks[i].x - blocks[i+1].x < Block.WIDTH)
             }
         }
-        g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE, this);
+        g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE - moveUpOffSet, this);
         g.setFont(new Font("Times New Roman", Font.ITALIC, 24));
         g.setColor(Color.black);
         //g.drawString(this.timeStr + (this.timeLeft / 1000) + "." + (this.timeLeft % 1000 / 100), this.MAPX_SIZE / 2 - 50, this.MAPY_SIZE - 20);
