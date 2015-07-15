@@ -12,7 +12,7 @@ public class Board extends JPanel {
     public static final int WIDTH = 400, HEIGHT = 800;
     //private JLabel background;
     /* SIZE OF THE GRID */
-    public static final int MAX_X = 8, MAX_Y = 16;
+    public static final int MAX_X = 8, MAX_Y = 16 + 1 ;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
     public Cursor levelCursor = new Cursor();
     public boolean moveable = true;
@@ -88,8 +88,11 @@ public class Board extends JPanel {
             }
         }
         
+        for (int x = 0; x < MAX_X; x++) 
+            levelArray[x][MAX_Y - 2].justSpawned = false;
+
         for (int x = 0; x < MAX_X; x++) {
-            adjacencyCheck(x, MAX_Y - 1);
+            adjacencyCheck(x, MAX_Y - 2);
         }
     }
     
@@ -104,7 +107,7 @@ public class Board extends JPanel {
         int tempUp = 0;
         Boolean deleteOrigin = false;
         while (x > 0) {
-            if (levelArray[x][y].color.equals(levelArray[x - 1][y].color) && levelArray[x][y].color != "EMPTY") {
+            if (levelArray[x][y].color.equals(levelArray[x - 1][y].color) && levelArray[x][y].color != "EMPTY" ) {//&& !levelArray[x][y].justSpawned) {
                 numSameL++;
                 x--;
             } else {
@@ -113,7 +116,7 @@ public class Board extends JPanel {
         }
         x = xref;
         while (x < MAX_X - 1) {
-            if (levelArray[x][y].color == levelArray[x + 1][y].color && levelArray[x][y].color != "EMPTY") {
+            if (levelArray[x][y].color == levelArray[x + 1][y].color && levelArray[x][y].color != "EMPTY") {//&& !levelArray[x][y].justSpawned) {
                 numSameR++;
                 x++;
             } else {
@@ -122,7 +125,7 @@ public class Board extends JPanel {
         }
         x = xref;
         while (y > 0) {
-            if (levelArray[x][y].color == levelArray[x][y - 1].color && levelArray[x][y].color != "EMPTY") {
+            if (levelArray[x][y].color == levelArray[x][y - 1].color && levelArray[x][y].color != "EMPTY" && !levelArray[x][y].justSpawned) {
                 numSameU++;
                 y--;
             } else {
@@ -131,7 +134,7 @@ public class Board extends JPanel {
         }
         y = yref;
         while (y < MAX_Y - 1) {
-            if (levelArray[x][y].color == levelArray[x][y + 1].color && levelArray[x][y].color != "EMPTY") {
+            if (levelArray[x][y].color == levelArray[x][y + 1].color && levelArray[x][y].color != "EMPTY"&& !levelArray[x][y + 1].justSpawned) {
                 numSameD++;
                 y++;
             } else {
@@ -172,8 +175,8 @@ public class Board extends JPanel {
 
     public void moveUp()
     {
-        for (int x = 0; x < levelArray.length; x++) {
-            for (int y = 1; y < levelArray[0].length; y++) {
+        for (int x = 0; x < MAX_X; x++) {
+            for (int y = 1; y < MAX_Y; y++) {
                 levelArray[x][y - 1] = levelArray[x][y];
             }
         }
@@ -331,11 +334,5 @@ public class Board extends JPanel {
         }
         //Draws the cursor
         g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE - moveUpOffSet, this);
-        
-       // g.setFont(new Font("Times New Roman", Font.ITALIC, 24));
-       // g.setColor(Color.black);
-        //g.drawString(this.timeStr + (this.timeLeft / 1000) + "." + (this.timeLeft % 1000 / 100), this.MAPX_SIZE / 2 - 50, this.MAPY_SIZE - 20);
-        //Draws a String, centered at the bottom of the window
-        
     }
 }
