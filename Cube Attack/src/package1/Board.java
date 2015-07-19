@@ -12,7 +12,7 @@ public class Board extends JPanel {
     public static final int WIDTH = 400, HEIGHT = 800;
     //private JLabel background;
     /* SIZE OF THE GRID */
-    public static final int MAX_X = 8, MAX_Y = 16 + 1 ;
+    public static final int MAX_X = 8, MAX_Y = 17;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
     public Cursor levelCursor = new Cursor();
     public boolean moveable = true;
