@@ -10,7 +10,7 @@ import javax.swing.*;
 public class Board extends JPanel {
 
     public static final int WIDTH = 400, HEIGHT = 800;
-    private JLabel background;
+    //private JLabel background;
     /* SIZE OF THE GRID */
     public static final int MAX_X = 8, MAX_Y = 17;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
@@ -24,34 +24,23 @@ public class Board extends JPanel {
     private static boolean gameOver = false;
     private static boolean gameStarted = false;
     private ScheduledExecutorService  moveUpThread;
+    private ImageIcon backgroundIcon = new ImageIcon("src/resources/background.jpg");
+    private Image background = backgroundIcon.getImage();
 
     int originalMoveUpTimer = 200;
     int moveUpTimer = originalMoveUpTimer;
-    public static boolean canMoveUp = true;
-    public static int moveUpInterval = 0;
-    public static int moveUpOffSet = 0;
+    public boolean canMoveUp = true;
+    public int moveUpInterval = 0;
+    public int moveUpOffSet = 0;
 
     public Board() {
-            /*
-        background = new JLabel();
-        background.setBounds(0, 0, WIDTH, HEIGHT);
-        background.setIcon(new ImageIcon("src/resources/background.jpg"));
-        background.setOpaque(false);
-        background.setLayout(new BorderLayout());
-        background.setVisible(true);
-        //add(background);
-        //repaint();
-            */
-
         setBorder(BorderFactory.createLineBorder(Color.black));
-        //setSize(new Dimension(WIDTH,HEIGHT));
-        decreaseTime();
+        moveUpInterval = (int)Math.ceil((float)originalMoveUpTimer / (float)BLOCK_SIZE);
         resetArray();
-        generateRow();
         removeBlock();
         moveBlock();
-        moveUpInterval = (int)Math.ceil((float)originalMoveUpTimer / (float)BLOCK_SIZE);
-        //moveUp();
+        generateRow();
+        decreaseTime();
     }
 
     public void resetArray() {
@@ -82,7 +71,7 @@ public class Board extends JPanel {
     
     public void generateRow() {
         /* This Checks for three in a row when you generate a new row.
-        * Looks weird, just checks the last to indicies and if the macth, if they
+        * Looks weird, just checks the last two indicies and if the macth, if they
         * do, it doesn't allow for a block with the same color to be created
         */
         for (int x = 0; x < MAX_X; x++) {
@@ -97,9 +86,25 @@ public class Board extends JPanel {
                 levelArray[x][MAX_Y - 1] = new Block();
             }
         }
-        
+        /*
         for (int x = 0; x < MAX_X; x++) {
-            adjacencyCheck(x, MAX_Y - 1);
+            if (x >= 2 && (levelArray[x - 1][MAX_Y - 2].color
+                    == levelArray[x - 2][MAX_Y - 2].color)) {
+                while ((levelArray[x][MAX_Y - 2] = new Block()).color
+                        == levelArray[x - 1][MAX_Y - 2].color) {
+                    levelArray[x][MAX_Y - 2] = null;
+                    levelArray[x][MAX_Y - 2] = new Block();
+                }
+            } else {
+                levelArray[x][MAX_Y - 2] = new Block();
+            }
+        }
+        */
+        for (int x = 0; x < MAX_X; x++) 
+            levelArray[x][MAX_Y - 2].justSpawned = false;
+
+        for (int x = 0; x < MAX_X; x++) {
+            adjacencyCheck(x, MAX_Y - 2);
         }
     }
     
@@ -114,7 +119,7 @@ public class Board extends JPanel {
         int tempUp = 0;
         Boolean deleteOrigin = false;
         while (x > 0) {
-            if (levelArray[x][y].color.equals(levelArray[x - 1][y].color) && levelArray[x][y].color != "EMPTY") {
+            if (levelArray[x][y].color.equals(levelArray[x - 1][y].color) && levelArray[x][y].color != "EMPTY" ) {//&& !levelArray[x][y].justSpawned) {
                 numSameL++;
                 x--;
             } else {
@@ -123,7 +128,7 @@ public class Board extends JPanel {
         }
         x = xref;
         while (x < MAX_X - 1) {
-            if (levelArray[x][y].color == levelArray[x + 1][y].color && levelArray[x][y].color != "EMPTY") {
+            if (levelArray[x][y].color == levelArray[x + 1][y].color && levelArray[x][y].color != "EMPTY") {//&& !levelArray[x][y].justSpawned) {
                 numSameR++;
                 x++;
             } else {
@@ -132,7 +137,7 @@ public class Board extends JPanel {
         }
         x = xref;
         while (y > 0) {
-            if (levelArray[x][y].color == levelArray[x][y - 1].color && levelArray[x][y].color != "EMPTY") {
+            if (levelArray[x][y].color == levelArray[x][y - 1].color && levelArray[x][y].color != "EMPTY" && !levelArray[x][y].justSpawned) {
                 numSameU++;
                 y--;
             } else {
@@ -141,7 +146,7 @@ public class Board extends JPanel {
         }
         y = yref;
         while (y < MAX_Y - 1) {
-            if (levelArray[x][y].color == levelArray[x][y + 1].color && levelArray[x][y].color != "EMPTY") {
+            if (levelArray[x][y].color == levelArray[x][y + 1].color && levelArray[x][y].color != "EMPTY"&& !levelArray[x][y + 1].justSpawned) {
                 numSameD++;
                 y++;
             } else {
@@ -182,8 +187,8 @@ public class Board extends JPanel {
 
     public void moveUp()
     {
-        for (int x = 0; x < levelArray.length; x++) {
-            for (int y = 1; y < levelArray[0].length; y++) {
+        for (int x = 0; x < MAX_X; x++) {
+            for (int y = 1; y < MAX_Y; y++) {
                 levelArray[x][y - 1] = levelArray[x][y];
             }
         }
@@ -290,55 +295,70 @@ public class Board extends JPanel {
         return new Dimension(MAPX_SIZE, MAPY_SIZE);
     }
     
-    //
-    private void decreaseTime() {
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
+    
+    public class DecreaseTimeThread implements Runnable
+    {
+        
             @Override
             public void run() {
-                if(canMoveUp && moveUpTimer > 0)
-                {
-                    if(moveUpTimer % moveUpInterval == 0)
+                try{
+                    if(canMoveUp && moveUpTimer > 0)
+                    {
+                        if(moveUpTimer % moveUpInterval == 0)
                             moveUpOffSet += 1;
-                    moveUpTimer -= 1;
+                        moveUpTimer -= 1;
+                    }
+                    else if (canMoveUp && moveUpTimer <= 0)
+                    {
+                        moveUpOffSet = 0;
+                        moveUpTimer = originalMoveUpTimer;
+                        moveUp();
+                        generateRow();
+                    }
+                    
                 }
-                else if (canMoveUp && moveUpTimer <= 0)
+                catch (Throwable e)
                 {
-                    moveUpOffSet = 0;
-                    moveUpTimer = originalMoveUpTimer;
-                    moveUp();
-                    generateRow();
+                    System.out.println("DecreaseTimeThread:" + e);
                 }
-                
-                repaint();
+            repaint();
             }
-        }, 0, 10, TimeUnit.MILLISECONDS);
+            
+    }
+    //
+    public void decreaseTime() {
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        //DecreaseTimeThread thread = new DecreaseTimeThread();
+        exec.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
     }
     
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        // Draw Text
+        //Whatever is painted last appears on top of everything else
         
+        super.paintComponent(g);
+        
+        //Draws the background image at (0,0) of this board
+        g.drawImage(background, 0, 0, WIDTH, HEIGHT, this);
+        
+        //Draws vertica and horizantal lines to create a visual grid
         for (int i = 0; i < MAPY_SIZE / BLOCK_SIZE; i++) {
             g.drawLine(BLOCK_SIZE * i, 0, BLOCK_SIZE * i, MAPY_SIZE);
             g.drawLine(0, BLOCK_SIZE * i, MAPX_SIZE, BLOCK_SIZE * i);
             
         }
+        
+        //Draws the blocks
         for (int x = 0; x < levelArray.length; x++) {
             for (int y = 0; y < levelArray[0].length; y++) {
                 if (levelArray[x][y] instanceof Block) {
                     g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, this);
+                    //g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y, this);
                 }
-                //block.x = 50*i
-                //block.y = 50*j
-                //<hittest> : if(blocks[i].x - blocks[i+1].x < Block.WIDTH)
+                
             }
         }
+        //Draws the cursor
         g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE - moveUpOffSet, this);
-        g.setFont(new Font("Times New Roman", Font.ITALIC, 24));
-        g.setColor(Color.black);
-        //g.drawString(this.timeStr + (this.timeLeft / 1000) + "." + (this.timeLeft % 1000 / 100), this.MAPX_SIZE / 2 - 50, this.MAPY_SIZE - 20);
-        //Draws a String, centered at the bottom of the window
-        
+        //g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE, this);
     }
 }

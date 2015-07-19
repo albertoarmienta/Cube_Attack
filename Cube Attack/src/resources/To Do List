@@ -1,5 +1,6 @@
 TO DO
 -----
+-Make Blocks fall faster
 -Display a combo counter (2+)
 -Display number of blocks destroyed (3-8)
 -Brick blocks
@@ -11,3 +12,5 @@ TO DO
 -----------------------
 -Cannot generate rows while blocks are purple
 -Cannot generate rows while blocks are falling
+-Fix Bug: Adding a block onto a chain of purple blocks (of the same color as the aforementioned block), 
+          causes the block to become part of the chain
