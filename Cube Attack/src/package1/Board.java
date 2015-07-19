@@ -12,7 +12,7 @@ public class Board extends JPanel {
     public static final int WIDTH = 400, HEIGHT = 800;
     //private JLabel background;
     /* SIZE OF THE GRID */
-    public static final int MAX_X = 8, MAX_Y = 16 + 1 ;
+    public static final int MAX_X = 8, MAX_Y = 16 + 2 ;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
     public Cursor levelCursor = new Cursor();
     public boolean moveable = true;
@@ -35,13 +35,12 @@ public class Board extends JPanel {
 
     public Board() {
         setBorder(BorderFactory.createLineBorder(Color.black));
-        decreaseTime();
+        moveUpInterval = (int)Math.ceil((float)originalMoveUpTimer / (float)BLOCK_SIZE);
         resetArray();
-        generateRow();
         removeBlock();
         moveBlock();
-        moveUpInterval = (int)Math.ceil((float)originalMoveUpTimer / (float)BLOCK_SIZE);
-        //moveUp();
+        generateRow();
+        decreaseTime();
     }
 
     public void resetArray() {
@@ -72,7 +71,7 @@ public class Board extends JPanel {
     
     public void generateRow() {
         /* This Checks for three in a row when you generate a new row.
-        * Looks weird, just checks the last to indicies and if the macth, if they
+        * Looks weird, just checks the last two indicies and if the macth, if they
         * do, it doesn't allow for a block with the same color to be created
         */
         for (int x = 0; x < MAX_X; x++) {
@@ -87,7 +86,20 @@ public class Board extends JPanel {
                 levelArray[x][MAX_Y - 1] = new Block();
             }
         }
-        
+        /*
+        for (int x = 0; x < MAX_X; x++) {
+            if (x >= 2 && (levelArray[x - 1][MAX_Y - 2].color
+                    == levelArray[x - 2][MAX_Y - 2].color)) {
+                while ((levelArray[x][MAX_Y - 2] = new Block()).color
+                        == levelArray[x - 1][MAX_Y - 2].color) {
+                    levelArray[x][MAX_Y - 2] = null;
+                    levelArray[x][MAX_Y - 2] = new Block();
+                }
+            } else {
+                levelArray[x][MAX_Y - 2] = new Block();
+            }
+        }
+        */
         for (int x = 0; x < MAX_X; x++) 
             levelArray[x][MAX_Y - 2].justSpawned = false;
 
@@ -283,29 +295,41 @@ public class Board extends JPanel {
         return new Dimension(MAPX_SIZE, MAPY_SIZE);
     }
     
-    //
-    private void decreaseTime() {
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
+    
+    public class DecreaseTimeThread implements Runnable
+    {
+        
             @Override
             public void run() {
-                if(canMoveUp && moveUpTimer > 0)
-                {
-                    if(moveUpTimer % moveUpInterval == 0)
+                try{
+                    if(canMoveUp && moveUpTimer > 0)
+                    {
+                        if(moveUpTimer % moveUpInterval == 0)
                             moveUpOffSet += 1;
-                    moveUpTimer -= 1;
+                        moveUpTimer -= 1;
+                        repaint();
+                    }
+                    else if (canMoveUp && moveUpTimer <= 0)
+                    {
+                        moveUpOffSet = 0;
+                        moveUpTimer = originalMoveUpTimer;
+                        moveUp();
+                        generateRow();
+                    }
+                    
                 }
-                else if (canMoveUp && moveUpTimer <= 0)
+                catch (Throwable e)
                 {
-                    moveUpOffSet = 0;
-                    moveUpTimer = originalMoveUpTimer;
-                    moveUp();
-                    generateRow();
+                    System.out.println("DecreaseTimeThread:" + e);
                 }
-                
-                repaint();
             }
-        }, 0, 10, TimeUnit.MILLISECONDS);
+            
+    }
+    //
+    public void decreaseTime() {
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        //DecreaseTimeThread thread = new DecreaseTimeThread();
+        exec.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
     }
     
     public void paintComponent(Graphics g) {
@@ -315,7 +339,7 @@ public class Board extends JPanel {
         
         //Draws the background image at (0,0) of this board
         g.drawImage(background, 0, 0, WIDTH, HEIGHT, this);
-       
+        
         //Draws vertica and horizantal lines to create a visual grid
         for (int i = 0; i < MAPY_SIZE / BLOCK_SIZE; i++) {
             g.drawLine(BLOCK_SIZE * i, 0, BLOCK_SIZE * i, MAPY_SIZE);
@@ -328,11 +352,13 @@ public class Board extends JPanel {
             for (int y = 0; y < levelArray[0].length; y++) {
                 if (levelArray[x][y] instanceof Block) {
                     g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, this);
+                    //g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y, this);
                 }
-    
+                
             }
         }
         //Draws the cursor
         g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE - moveUpOffSet, this);
+        //g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE, this);
     }
 }

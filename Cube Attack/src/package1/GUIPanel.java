@@ -1,20 +1,28 @@
 package package1;
 
 import java.applet.Applet;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 //REVERSION
 
 class GUIPanel extends Applet implements ActionListener{
     public static final int WIDTH = 1005, HEIGHT = 829;
     public int gameState = 0;
     public Board b1;
+    public int seconds = 0;
+    public int mSeconds = 0;
     public Board b2;
     public JLabel banner;
     private JLabel menu;
@@ -42,8 +50,10 @@ class GUIPanel extends Applet implements ActionListener{
     public void startGame(){
         game.remove(menu);
         b1 = new Board();
+        //b1.decreaseTime();
         b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
         b2 = new Board();
+        //b2.decreaseTime();
         b2.setBounds(b2.WIDTH + 200,0,b2.WIDTH,b2.HEIGHT);
         banner = new JLabel();
         banner.setBounds(b1.WIDTH, 0, WIDTH-b1.WIDTH-b2.WIDTH,b1.HEIGHT);
@@ -52,9 +62,41 @@ class GUIPanel extends Applet implements ActionListener{
         game.getContentPane().add(b1);
         game.getContentPane().add(b2);
         game.repaint();
+        //decreaseTime();
         
     }
 
+    private void decreaseTime() {
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+
+                if(mSeconds > 9 )
+                {
+                    seconds++;
+                    mSeconds = 0;
+                }
+                else
+                    mSeconds++;
+                System.out.println("fucskfjasd;lfkjas;d");
+                repaint();
+            }
+        }, 0, 100, TimeUnit.MILLISECONDS);
+    }
+
+    /*
+    @Override
+     public void paintComponent(Graphics g) {
+        //Whatever is painted last appears on top of everything else
+        super.paintComponent(g);
+        //g.drawString(String.format("%d:%d",seconds, mSeconds), b2.getX() - (banner.getX()/2), HEIGHT / 2);
+        g.setColor(Color.BLUE);
+        g.drawString(String.format("%d:%d",seconds, mSeconds), WIDTH / 2, HEIGHT / 2);
+        g.drawRect(WIDTH/2, HEIGHT/2, 200, 200);
+        
+     }
+    */
     @Override
     public void actionPerformed(ActionEvent ae) {
         throw new UnsupportedOperationException("Not supported yet.");
