@@ -12,7 +12,7 @@ public class Board extends JPanel {
     public static final int WIDTH = 400, HEIGHT = 800;
     //private JLabel background;
     /* SIZE OF THE GRID */
-    public static final int MAX_X = 8, MAX_Y = 16 + 2 ;
+    public static final int MAX_X = 8, MAX_Y = 16 + 1 ;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
     public Cursor levelCursor = new Cursor();
     public boolean moveable = true;
@@ -29,9 +29,9 @@ public class Board extends JPanel {
 
     int originalMoveUpTimer = 200;
     int moveUpTimer = originalMoveUpTimer;
-    public static boolean canMoveUp = true;
-    public static int moveUpInterval = 0;
-    public static int moveUpOffSet = 0;
+    public boolean canMoveUp = true;
+    public int moveUpInterval = 0;
+    public int moveUpOffSet = 0;
 
     public Board() {
         setBorder(BorderFactory.createLineBorder(Color.black));
@@ -307,7 +307,6 @@ public class Board extends JPanel {
                         if(moveUpTimer % moveUpInterval == 0)
                             moveUpOffSet += 1;
                         moveUpTimer -= 1;
-                        repaint();
                     }
                     else if (canMoveUp && moveUpTimer <= 0)
                     {
@@ -322,6 +321,7 @@ public class Board extends JPanel {
                 {
                     System.out.println("DecreaseTimeThread:" + e);
                 }
+            repaint();
             }
             
     }
