@@ -33,7 +33,9 @@ public class Board extends JPanel {
     public int moveUpInterval = 0;
     public int moveUpOffSet = 0;
 
-    public Board() {
+    private EnemyAI AIHandler;
+
+    public Board(boolean AI) {
         setBorder(BorderFactory.createLineBorder(Color.black));
         moveUpInterval = (int)Math.ceil((float)originalMoveUpTimer / (float)BLOCK_SIZE);
         resetArray();
@@ -41,6 +43,10 @@ public class Board extends JPanel {
         moveBlock();
         generateRow();
         decreaseTime();
+        if(AI)
+        {
+            AIHandler = new EnemyAI(levelArray, this);
+        }
     }
 
     public void resetArray() {
@@ -268,6 +274,8 @@ public class Board extends JPanel {
         {
             levelArray[x1][y] = levelArray[x2][y];
             levelArray[x2][y] = temp;
+            adjacencyCheck(x1, y);
+            adjacencyCheck(x2, y);
         }
     }
     
