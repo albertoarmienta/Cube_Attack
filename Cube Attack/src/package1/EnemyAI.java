@@ -63,7 +63,9 @@ public class EnemyAI
             y = b;
             whichCursor = 'U';
             switchBlocks = false;
-            weight = 0;
+            weight = calculateYWeight(board.levelCursor.getCursory(), this.y);
+                    
+            //weight = 0;
         }
         //resets swtich blocks and cursor cause only valid for one move
         public void reset()
@@ -95,7 +97,7 @@ public class EnemyAI
 
        for(int i = 0; i < board.MAX_X /*&& i < (start_x + 3)*/; i++)
        {
-           for(int j = 0; j < board.MAX_Y /*&& j < (start_y + 3)*/; j++)
+           for(int j = 0; j < board.MAX_Y - 1 /*&& j < (start_y + 3)*/; j++)
            {
                switch(levelArray[i][j].color)
                {
@@ -117,19 +119,26 @@ public class EnemyAI
                }
            }
        }
+       System.out.println(board.levelCursor.getCursory());
        Vector<Vector<Vertex>> results = new Vector<>();
-       results.add(blue);
-       results.add(red);
        results.add(green);
        results.add(black);
        results.add(white);
+       results.add(blue);
+       results.add(red);
        
        for(int i = 0; i < results.size(); i++)
        {
-           if((temp = match3Horizontal(results.get(i))) != null)
+           for(int j = 0; j < results.get(i).size(); j++)
            {
-                if(temp.weight < leastWeight)
-                    bestMatch = temp;
+               if((temp = match3Horizontal(results.get(i))) != null)
+               {
+                   if(Math.abs(temp.weight) < leastWeight)
+                   {
+                       leastWeight = Math.abs(temp.weight);
+                       bestMatch = temp;
+                   }
+               }
            }
        }
        if(bestMatch != null)
@@ -137,55 +146,79 @@ public class EnemyAI
        /*
        Vertex moveTo = match3Horizontal(black);
        if(moveTo != null)
-           moveCursorTo(moveTo);
-               */
+       moveCursorTo(moveTo);
+       */
     }
     
     public Vertex match3Horizontal(Vector<Vertex> array)
     {
-        Vertex [] temp = new Vertex[3];
+        //Vertex [] temp = new Vertex[3];
         if(array.size() < 3)
             return null;
-        insertionSort(array);
+        Vector<Vertex> temp = insertionSort(array);
         boolean matchFound = false;
         Vertex start = null, middle = null, end = null;
-          for(int i = 0; i < array.size(); i++ )
-              System.out.print(board.levelArray[array.get(i).x][array.get(i).y].color+ " ");
-              System.out.println();
+        int index = 10000, w = 1000;
+        /*
         for(int i = 0; i < array.size(); i++ )
+        System.out.print(board.levelArray[array.get(i).x][array.get(i).y].color+ " ");
+        System.out.println();
+        */
+        for(int i = 0; i < temp.size(); i++ )
         {
-            if(i + 2 < array.size() && array.get(i).y == array.get(i + 2).y )
+            if(i + 2 < temp.size() && temp.get(i).y == temp.get(i + 2).y )
             {
+                if(Math.abs(temp.get(i).weight) < w)
+                {
+                    w = Math.abs(temp.get(i).weight);
+                    index = i;
+                    matchFound = true;
+                }
                 //we know we have 3 in a horizontalRow
-                start = array.get(i);
-                middle = array.get(i+1);
-                end = array.get(i + 2);
                 //System.out.println("[" + start.x + ","+ start.y + "] [" +middle.x + ","+ middle.y + "] ["+ end.x+"," + end.y+ "]");
-                matchFound = true;
-                break;
             }
         }
-        if(!matchFound)
+        if(!matchFound || index == 10000)
             return null;
         else
         {
-            if(middle.x < (end.x - 1))
+            start = temp.get(index);
+            middle = temp.get(index+1);
+            end = temp.get(index + 2);
+            if( (start.x + 1) == middle.x)
             {
                 end.whichCursor = 'R';
-                if(board.levelCursor.getCursory() == end.y)
+                if(board.levelCursor.getCursor2x() == end.x && board.levelCursor.getCursory() == end.y)
                     end.switchBlocks = true;
-                end.weight = calculateWeight(end);
+                end.weight = calculateYWeight(end);
                 return end;
             }
-            else if(middle.x > (start.x + 1))
+            else if ((end.x - 1) == middle.x)
             {
+                System.out.println("end:middle");
                 start.whichCursor = 'L';
-                if(board.levelCursor.getCursory() == start.y)
+                if(board.levelCursor.getCursorx() == start.x && board.levelCursor.getCursory() == start.y)
                     start.switchBlocks = true;
-                start.weight = calculateWeight(start);
+                start.weight = calculateYWeight(start);
                 return start;
             }
-            else return middle;
+            else if(middle.x < (end.x - 1) && middle.x != (end.x - 1))
+            {
+                end.whichCursor = 'R';
+                if(board.levelCursor.getCursor2x() == end.x && board.levelCursor.getCursory() == end.y)
+                    end.switchBlocks = true;
+                end.weight = calculateYWeight(end);
+                return end;
+            }
+            else if(middle.x > (start.x + 1) && middle.x != (start.x + 1 ))
+            {
+                start.whichCursor = 'L';
+                if(board.levelCursor.getCursorx() == start.x && board.levelCursor.getCursory() == start.y)
+                    start.switchBlocks = true;
+                start.weight = calculateYWeight(start);
+                return start;
+            }
+            else return null;//return middle;
         }
         
         //if(Math.abs(start.x - middle.x) != 1)
@@ -195,53 +228,82 @@ public class EnemyAI
         // take into account disance from cursor?
         
     }
-
+    
+    //this one sorted by Y position
+    /*
+    public Vector<Vertex> insertionSort(Vector<Vertex> array)
+    {
+    for(int i = 1; i < array.size(); i++)
+    {
+    Vertex temp = array.get(i);
+    int j;
+    for(j = i - 1; j >= 0 && temp.y < array.get(j).y; j -- )
+    array.set(j + 1, array.get(j));// = array.get(j);
+    array.set(j+1, temp);
+    }
+    
+    return array;
+    }
+    
+    //this one sorts by Y weight
+    */
     public Vector<Vertex> insertionSort(Vector<Vertex> array)
     {
         for(int i = 1; i < array.size(); i++)
         {
             Vertex temp = array.get(i);
             int j;
-            for(j = i - 1; j >= 0 && temp.y < array.get(j).y; j -- )
+            for(j = i - 1; j >= 0 && temp.weight < array.get(j).weight; j -- )
                 array.set(j + 1, array.get(j));// = array.get(j);
             array.set(j+1, temp);
         }
-
+        
         return array;
     }
-
+    
+    
+    
     void moveCursorTo(Vertex dest)
     {
         int deltaX;
         if(dest.whichCursor == 'L')
             deltaX = board.levelCursor.getCursorx() - dest.x;
-        else
+        else if(dest.whichCursor == 'R')
             deltaX = board.levelCursor.getCursor2x() - dest.x;
-
+        else return;
+        
         int deltaY = board.levelCursor.getCursory() - dest.y;
-
+        
         if(deltaX < 0)
             board.levelCursor.moveRight();
         else if (deltaX > 0)
             board.levelCursor.moveLeft();
-
+        
         if(deltaY < 0)
             board.levelCursor.moveDown();
         else if (deltaY > 0)
             board.levelCursor.moveUp();
-
+        
         if(dest.switchBlocks== true)
             board.swapTargets();
         dest.reset();
-
-
+        
+        
     }
-
+    
+    public int calculateYWeight(Vertex ver)
+    {
+        return (board.levelCursor.getCursory() - ver.y);
+    }
+    public int calculateYWeight(int cursorY, int blockY)
+    {
+        return cursorY - blockY;
+    }
     public int calculateWeight(Vertex ver)
     {
         int x = Math.abs(board.levelCursor.getCursorx() - ver.x);
         int y = Math.abs(board.levelCursor.getCursory() - ver.y);
         return x + y;
     }
-
+    
 }
