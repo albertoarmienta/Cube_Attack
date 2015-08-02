@@ -49,10 +49,10 @@ class GUIPanel extends Applet implements ActionListener{
     }
     public void startGame(){
         game.remove(menu);
-        b1 = new Board();
+        b1 = new Board(true);
         //b1.decreaseTime();
         b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
-        b2 = new Board();
+        b2 = new Board(false);
         //b2.decreaseTime();
         b2.setBounds(b2.WIDTH + 200,0,b2.WIDTH,b2.HEIGHT);
         banner = new JLabel();
@@ -125,8 +125,8 @@ class GUIPanel extends Applet implements ActionListener{
                 case KeyEvent.VK_SPACE:
                     if(gameState == 1){
                     b2.swapTargets();
-                    b2.adjacencyCheck( b2.levelCursor.getCursorx(),  b2.levelCursor.getCursory());
-                    b2.adjacencyCheck( b2.levelCursor.getCursor2x(),  b2.levelCursor.getCursory());
+                    //b2.adjacencyCheck( b2.levelCursor.getCursorx(),  b2.levelCursor.getCursory());
+                    //b2.adjacencyCheck( b2.levelCursor.getCursor2x(),  b2.levelCursor.getCursory());
                     }
                     break;
                 case KeyEvent.VK_UP:
