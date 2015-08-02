@@ -12,7 +12,7 @@ public class Board extends JPanel {
     public static final int WIDTH = 400, HEIGHT = 800;
     //private JLabel background;
     /* SIZE OF THE GRID */
-    public static final int MAX_X = 8, MAX_Y = 16 + 1 ;
+    public static final int MAX_X = 8, MAX_Y = 17;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
     public Cursor levelCursor = new Cursor();
     public boolean moveable = true;
@@ -33,7 +33,9 @@ public class Board extends JPanel {
     public int moveUpInterval = 0;
     public int moveUpOffSet = 0;
 
-    public Board() {
+    private EnemyAI AIHandler;
+
+    public Board(boolean AI) {
         setBorder(BorderFactory.createLineBorder(Color.black));
         moveUpInterval = (int)Math.ceil((float)originalMoveUpTimer / (float)BLOCK_SIZE);
         resetArray();
@@ -41,6 +43,10 @@ public class Board extends JPanel {
         moveBlock();
         generateRow();
         decreaseTime();
+        if(AI)
+        {
+            AIHandler = new EnemyAI(levelArray, this);
+        }
     }
 
     public void resetArray() {
@@ -86,20 +92,7 @@ public class Board extends JPanel {
                 levelArray[x][MAX_Y - 1] = new Block();
             }
         }
-        /*
-        for (int x = 0; x < MAX_X; x++) {
-            if (x >= 2 && (levelArray[x - 1][MAX_Y - 2].color
-                    == levelArray[x - 2][MAX_Y - 2].color)) {
-                while ((levelArray[x][MAX_Y - 2] = new Block()).color
-                        == levelArray[x - 1][MAX_Y - 2].color) {
-                    levelArray[x][MAX_Y - 2] = null;
-                    levelArray[x][MAX_Y - 2] = new Block();
-                }
-            } else {
-                levelArray[x][MAX_Y - 2] = new Block();
-            }
-        }
-        */
+
         for (int x = 0; x < MAX_X; x++) 
             levelArray[x][MAX_Y - 2].justSpawned = false;
 
@@ -268,6 +261,8 @@ public class Board extends JPanel {
         {
             levelArray[x1][y] = levelArray[x2][y];
             levelArray[x2][y] = temp;
+            adjacencyCheck(x1, y);
+            adjacencyCheck(x2, y);
         }
     }
     

@@ -39,6 +39,9 @@ public class Block extends Rectangle {
             case "EMPTY":
                 imageIcon = new ImageIcon("src/resources/empty.png");
                 break;
+            case "NONE":
+                imageIcon = new ImageIcon("src/resources/EXCLAM.png");
+                break;
         }
         justSpawned = true;
         image = imageIcon.getImage();
