@@ -92,20 +92,7 @@ public class Board extends JPanel {
                 levelArray[x][MAX_Y - 1] = new Block();
             }
         }
-        /*
-        for (int x = 0; x < MAX_X; x++) {
-            if (x >= 2 && (levelArray[x - 1][MAX_Y - 2].color
-                    == levelArray[x - 2][MAX_Y - 2].color)) {
-                while ((levelArray[x][MAX_Y - 2] = new Block()).color
-                        == levelArray[x - 1][MAX_Y - 2].color) {
-                    levelArray[x][MAX_Y - 2] = null;
-                    levelArray[x][MAX_Y - 2] = new Block();
-                }
-            } else {
-                levelArray[x][MAX_Y - 2] = new Block();
-            }
-        }
-        */
+
         for (int x = 0; x < MAX_X; x++) 
             levelArray[x][MAX_Y - 2].justSpawned = false;
 

@@ -1,11 +1,15 @@
 TO DO
 -----
--Make it so the the window can be resized(so it scales)
--Make Blocks fall faster
+-Add timer
 -Display a combo counter (2+)
--Display number of blocks destroyed (3-8)
+-Windows for 2 player and solo
+-Make speed of blocks moving up increase as time goes on(probably will be easier
+    when the timer has been implemented)
 -Brick blocks
 -AI
+-Make it so the the window can be resized(so it scales)
+-Make Blocks fall faster
+-Display number of blocks destroyed (3-8)
 -Finalize Art
 -Add Sound
 

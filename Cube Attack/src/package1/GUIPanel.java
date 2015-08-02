@@ -125,8 +125,8 @@ class GUIPanel extends Applet implements ActionListener{
                 case KeyEvent.VK_SPACE:
                     if(gameState == 1){
                     b2.swapTargets();
-                    b2.adjacencyCheck( b2.levelCursor.getCursorx(),  b2.levelCursor.getCursory());
-                    b2.adjacencyCheck( b2.levelCursor.getCursor2x(),  b2.levelCursor.getCursory());
+                    //b2.adjacencyCheck( b2.levelCursor.getCursorx(),  b2.levelCursor.getCursory());
+                    //b2.adjacencyCheck( b2.levelCursor.getCursor2x(),  b2.levelCursor.getCursory());
                     }
                     break;
                 case KeyEvent.VK_UP:
