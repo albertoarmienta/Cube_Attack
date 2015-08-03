@@ -24,7 +24,7 @@ public class Board extends JPanel {
     private static boolean gameOver = false;
     private static boolean gameStarted = false;
     private ScheduledExecutorService  moveUpThread;
-    private ImageIcon backgroundIcon = new ImageIcon("src/resources/background.jpg");
+    private ImageIcon backgroundIcon = new ImageIcon(getClass().getResource("background.jpg"));
     private Image background = backgroundIcon.getImage();
 
     int originalMoveUpTimer = 200;
@@ -121,7 +121,7 @@ public class Board extends JPanel {
         }
         x = xref;
         while (x < MAX_X - 1) {
-            if (levelArray[x][y].color == levelArray[x + 1][y].color && levelArray[x][y].color != "EMPTY") {//&& !levelArray[x][y].justSpawned) {
+            if (levelArray[x][y].color == levelArray[x + 1][y].color && levelArray[x][y].color != "EMPTY") {
                 numSameR++;
                 x++;
             } else {

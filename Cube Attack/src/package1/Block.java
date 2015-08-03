@@ -19,28 +19,28 @@ public class Block extends Rectangle {
         this.color = color;
         switch (color) {
             case "RED":
-                imageIcon = new ImageIcon("src/resources/RED.png");
+                imageIcon = new ImageIcon(getClass().getResource("RED.png"));
                 break;
             case "BLUE":
-                imageIcon = new ImageIcon("src/resources/BLUE.png");
+                imageIcon = new ImageIcon(getClass().getResource("BLUE.png"));
                 break;
             case "GREEN":
-                imageIcon = new ImageIcon("src/resources/GREEN.png");
+                imageIcon = new ImageIcon(getClass().getResource("GREEN.png"));
                 break;
             case "WHITE":
-                imageIcon = new ImageIcon("src/resources/WHITE.png");
+                imageIcon = new ImageIcon(getClass().getResource("WHITE.png"));
                 break;
             case "BLACK":
-                imageIcon = new ImageIcon("src/resources/BLACK.png");
+                imageIcon = new ImageIcon(getClass().getResource("BLACK.png"));
                 break;
             case "EXCLAM":
-                imageIcon = new ImageIcon("src/resources/EXCLAM.png");
+                imageIcon = new ImageIcon(getClass().getResource("EXCLAM.png"));
                 break;
             case "EMPTY":
-                imageIcon = new ImageIcon("src/resources/empty.png");
+                imageIcon = new ImageIcon(getClass().getResource("empty.png"));
                 break;
             case "NONE":
-                imageIcon = new ImageIcon("src/resources/EXCLAM.png");
+                imageIcon = new ImageIcon(getClass().getResource("EXCLAM.png"));
                 break;
         }
         justSpawned = true;
@@ -51,22 +51,22 @@ public class Block extends Rectangle {
     public Block() {
         int random = (int) (Math.random() * 26);
         if (random < 5) {
-            imageIcon = new ImageIcon("src/resources/RED.png");
+            imageIcon = new ImageIcon(getClass().getResource("RED.png"));
             this.color = "RED";
         } else if (random < 10) {
-            imageIcon = new ImageIcon("src/resources/BLUE.png");
+            imageIcon = new ImageIcon(getClass().getResource("BLUE.png"));
             this.color = "BLUE";
         } else if (random < 15) {
-            imageIcon = new ImageIcon("src/resources/WHITE.png");
+            imageIcon = new ImageIcon(getClass().getResource("WHITE.png"));
             this.color = "WHITE";
         } else if (random < 20) {
-            imageIcon = new ImageIcon("src/resources/BLACK.png");
+            imageIcon = new ImageIcon(getClass().getResource("BLACK.png"));
             this.color = "BLACK";
         } else if (random < 25) {
-            imageIcon = new ImageIcon("src/resources/GREEN.png");
+            imageIcon = new ImageIcon(getClass().getResource("GREEN.png"));
             this.color = "GREEN";
         } else if (random == 25) {
-            imageIcon = new ImageIcon("src/resources/EXCLAM.png");
+            imageIcon = new ImageIcon(getClass().getResource("EXCLAM.png"));
             this.color = "EXCLAM";
         }
         justSpawned = true;
@@ -76,22 +76,22 @@ public class Block extends Rectangle {
     public void nextSprite() {
         switch (color) {
             case "RED":
-                imageIcon = new ImageIcon("src/resources/RED_2.png");
+                imageIcon = new ImageIcon(getClass().getResource("RED_2.png"));
                 break;
             case "BLUE":
-                imageIcon = new ImageIcon("src/resources/BLUE_2.png");
+                imageIcon = new ImageIcon(getClass().getResource("BLUE_2.png"));
                 break;
             case "GREEN":
-                imageIcon = new ImageIcon("src/resources/GREEN_2.png");
+                imageIcon = new ImageIcon(getClass().getResource("GREEN_2.png"));
                 break;
             case "WHITE":
-                imageIcon = new ImageIcon("src/resources/WHITE_2.png");
+                imageIcon = new ImageIcon(getClass().getResource("WHITE_2.png"));
                 break;
             case "BLACK":
-                imageIcon = new ImageIcon("src/resources/BLACK_2.png");
+                imageIcon = new ImageIcon(getClass().getResource("BLACK_2.png"));
                 break;
             case "EXCLAM":
-                imageIcon = new ImageIcon("src/resources/EXCLAM_2.png");
+                imageIcon = new ImageIcon(getClass().getResource("EXCLAM.png"));
                 break;
         }
         this.color = "PURP";
