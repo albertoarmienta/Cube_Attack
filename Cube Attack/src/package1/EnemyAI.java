@@ -5,6 +5,7 @@
  */
 package package1;
 
+import java.util.Collections;
 import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -27,7 +28,7 @@ public class EnemyAI
         levelArray = array;
         board = b;
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new AIThread(), 0, 500, TimeUnit.MILLISECONDS);
+        exec.scheduleAtFixedRate(new AIThread(), 0, 200, TimeUnit.MILLISECONDS);
     }
 
     public class AIThread implements Runnable
@@ -138,7 +139,6 @@ public class EnemyAI
                        bestMatch = temp;
                    }
                }
-       /*
                if((temp = matchVertical(results.get(i))) != null)
                {
                    if(Math.abs(temp.weight) < leastWeight)
@@ -149,7 +149,6 @@ public class EnemyAI
                    }
                }
 
-       */
            }
        }
 
@@ -239,9 +238,11 @@ public class EnemyAI
     {
         if(array.isEmpty())
             return null;
-        insertionYSort(array);
+        array = insertionYSort(array);
         Vector<Vector<Vertex>> results = new Vector<Vector<Vertex>>();
         Vector<Vertex> matches = new Vector<>();
+        Vector<Vertex> bestMatch = new Vector<>();
+        boolean newBestMatchFound = false;
         int numResults = 0;
         int numMatches = 0;
         int weight = 10000;
@@ -252,81 +253,107 @@ public class EnemyAI
         {
             //System.out.print("[" + array.get(i).x + ", " + array.get(i).y + "] weight:" + array.get(i).weight);
             //System.out.println(matches.get(numMatches).y + ", " + array.get(i).y);
-            if(array.get(i).y == matches.get(numMatches).y)
+            //if(array.get(i).y == matches.get(numMatches).y)
+            //{
+               //continue;
+            //}
+            if((matches.get(numMatches).y + 1) == (array.get(i).y ))
             {
-                continue;
-            }
-            else if((matches.get(numMatches).y + 1) == (array.get(i).y ))
-            {
-                //THIS IF IS NEVER TRIGGERED!!!!!!!!!!!!!!!!!!!!!
                 //System.out.println(matches.size());
                 matches.add(array.get(i));
                 numMatches ++;
+                /*
                 if(i == array.size() - 1 && numMatches > 2)
                 {
                     results.add(matches);
                     numResults ++;
                 }
+                */
                 if(array.get(i).weight < weight)
                 {
                     lowestResult = numResults;
                 }
             }
-            else if(matches.get(numMatches).y + 1 != array.get(i).y && matches.size() < 3)
+            else if(matches.get(numMatches).y + 1 != (array.get(i).y))//&& matches.size() < 3)
             {
                 //        results.add(matches);
                 //       numResults ++;
-                matches.clear();
-                matches.add(array.get(i));
-                numMatches = 0;
+                //System.out.println(matches.size());//bestMatch.size());
+                if(matches.size() < 3)
+                {
+                    matches.clear();
+                    matches.add(array.get(i));
+                    numMatches = 0;
+                }
+                else
+                {
+                    bestMatch.setSize(matches.size());
+                    //bestMatch.addAll(0, matches);
+                    Collections.copy(bestMatch, matches);
+                    System.out.println("BestMatch: " + bestMatch.size());//bestMatch.size());
+                    /*
+                    for(int j = 0; j < matches.size(); j++)
+                    {
+                        if(Math.abs(matches.get(j).weight) < weight)
+                        {
+                            newBestMatchFound = true;
+                            weight = Math.abs(matches.get(j).weight);
+                        }
+                    }
+                    if(newBestMatchFound == true)
+                    {
+                        bestMatch.setSize(matches.size());
+                        //bestMatch.addAll(0, matches);
+                        Collections.copy(bestMatch, matches);
+                        System.out.println("BestMatch: " + bestMatch.size());//bestMatch.size());
+                        newBestMatchFound = false;
+                    }
+                    */
+                    //bestMatch = matches;
+                    //break;
+                    
+                    
+                }
+                //System.out.println(matches.size());//bestMatch.size());
             }
+            /*
             else if(matches.get(numMatches).y + 1 != array.get(i).y && matches.size() >= 3)
             {
-                break;
-                /*
-                results.add(matches);
-                numResults ++;
-                matches.clear();
-                matches.add(array.get(i));
-                numMatches = 0;
-                */
+            for(int j = 0; j < matches.size(); j++)
+            {
+            if(Math.abs(matches.get(j).weight) < weight)
+            {
+            newBestMatchFound = true;
+            weight = Math.abs(matches.get(j).weight);
             }
+            }
+            if(newBestMatchFound == true)
+            {
+            bestMatch = matches;
+            newBestMatchFound = false;
+            }
+            bestMatch.setSize(matches.size());
+            //bestMatch.addAll(0, matches);
+            Collections.copy(bestMatch, matches);
+            System.out.println(bestMatch.size());//bestMatch.size());
+            //bestMatch = matches;
+            break;
+            /*
+            results.add(matches);
+            numResults ++;
+            matches.clear();
+            matches.add(array.get(i));
+            numMatches = 0;
+            }
+            */
         }
-        /*
-        for(int i = 0; i < results.size(); i++)
-        {
-        if(calculateWeight(results.get(i).get(0)) < weight)
-        {
-        resultsIndex = i;
-        }
-        }
-        */
-        System.out.println(results.size());
-        System.out.println("-----------------------------------------");
+        //System.out.println("-----------------------------------------");
         Vector<Vertex> temp;
         int resultsIndex = 0;
         int tempWeight = 0;
-        /*
-        if(results.isEmpty())
-        return null;
-        else
-        {
-        for(int i = 0; i < results.size(); i++)
-        {
-        if((tempWeight = calculateWeight(results.get(i).get(0))) < weight)
-        {
-        weight = tempWeight;
-        resultsIndex = i;
-        }
-        }
-        }
-        if(results.get(resultsIndex).size() < 3)
-        return null;
-        temp = results.get(resultsIndex);
-        System.out.println(matches.size());
-        */
-        if(matches.size() >=3)
-            temp  = matches;
+        
+        if(bestMatch.size() >=3)
+            temp  = bestMatch;
         else return null;
         Vertex start = null, middle = null, end = null;
         start = temp.get(0);
@@ -341,14 +368,23 @@ public class EnemyAI
             {
                 end.whichCursor = 'L';
                 if(board.levelCursor.getCursorx() == end.x && board.levelCursor.getCursory() == end.y)
+                {
+                    if(end.x + 1< board.MAX_X && board.levelArray[end.x][end.y].color == board.levelArray[end.x + 1][end.y].color)
+                        end.x ++;
                     end.switchBlocks = true;
+                }
+                //end.switchBlocks = true;
                 end.weight = calculateWeight(end);
             }
             else
             {
                 end.whichCursor = 'R';
                 if(board.levelCursor.getCursor2x() == end.x && board.levelCursor.getCursory() == end.y)
+                {
+                    if(end.x - 1 >= 0 && board.levelArray[end.x][end.y].color == board.levelArray[end.x - 1][end.y].color)
+                        end.x --;
                     end.switchBlocks = true;
+                }
                 end.weight = calculateWeight(end);
                 
             }
@@ -361,14 +397,22 @@ public class EnemyAI
             {
                 start.whichCursor = 'L';
                 if(board.levelCursor.getCursorx() == start.x && board.levelCursor.getCursory() == start.y)
+                {
+                    if(start.x + 1< board.MAX_X && board.levelArray[start.x][start.y].color == board.levelArray[start.x + 1][start.y].color)
+                        start.x ++;
                     start.switchBlocks = true;
+                }
                 start.weight = calculateWeight(start);
             }
             else
             {
                 start.whichCursor = 'R';
                 if(board.levelCursor.getCursor2x() == start.x && board.levelCursor.getCursory() == start.y)
+                {
+                    if(start.x - 1 >= 0 && board.levelArray[start.x][start.y].color == board.levelArray[start.x - 1][start.y].color)
+                        start.x --;
                     start.switchBlocks = true;
+                }
                 start.weight = calculateWeight(start);
                 
             }
@@ -381,7 +425,12 @@ public class EnemyAI
             {
                 middle.whichCursor = 'L';
                 if(board.levelCursor.getCursorx() == middle.x && board.levelCursor.getCursory() == middle.y)
+                {
+                    if(middle.x + 1< board.MAX_X && board.levelArray[middle.x][middle.y].color == board.levelArray[middle.x + 1][middle.y].color)
+                        middle.x ++;
                     middle.switchBlocks = true;
+                }
+                //middle.switchBlocks = true;
                 middle.weight = calculateWeight(middle);
                 return middle;
             }
@@ -389,7 +438,11 @@ public class EnemyAI
             {
                 middle.whichCursor = 'R';
                 if(board.levelCursor.getCursor2x() == middle.x && board.levelCursor.getCursory() == middle.y)
+                {
+                    if(middle.x - 1 >= 0 && board.levelArray[middle.x][middle.y].color == board.levelArray[middle.x - 1][middle.y].color)
+                        middle.x --;
                     middle.switchBlocks = true;
+                }
                 middle.weight = calculateWeight(middle);
                 return middle;
             }
@@ -401,14 +454,23 @@ public class EnemyAI
             {
                 start.whichCursor = 'L';
                 if(board.levelCursor.getCursorx() == start.x && board.levelCursor.getCursory() == start.y)
+                {
+                    if(start.x + 1< board.MAX_X && board.levelArray[start.x][start.y].color == board.levelArray[start.x + 1][start.y].color)
+                        start.x ++;
                     start.switchBlocks = true;
+                }
+                //    start.switchBlocks = true;
                 start.weight = calculateWeight(start);
             }
             else
             {
                 start.whichCursor = 'R';
                 if(board.levelCursor.getCursor2x() == start.x && board.levelCursor.getCursory() == start.y)
+                {
+                    if(start.x - 1 >= 0 && board.levelArray[start.x][start.y].color == board.levelArray[start.x - 1][start.y].color)
+                        start.x --;
                     start.switchBlocks = true;
+                }
                 start.weight = calculateWeight(start);
                 
             }
