@@ -28,10 +28,14 @@ public class Board extends JPanel {
     private Image background = backgroundIcon.getImage();
 
     int originalMoveUpTimer = 200;
+    public int comboTimer = 0;
+    public int DEFAULT_COMBO_TIMER = 200;
     int moveUpTimer = originalMoveUpTimer;
     public boolean canMoveUp = true;
     public int moveUpInterval = 0;
     public int moveUpOffSet = 0;
+
+    public int comboStreak = 0;
 
     private EnemyAI AIHandler;
 
@@ -102,7 +106,7 @@ public class Board extends JPanel {
     }
     
     
-    public void adjacencyCheck(int x, int y) {
+    public boolean adjacencyCheck(int x, int y) {
         int xref = x;
         int yref = y;
         int numSameL = 0;
@@ -176,6 +180,7 @@ public class Board extends JPanel {
             //moveUpTimer = originalMoveUpTimer;
             levelArray[x][y].nextSprite();
         }
+        return deleteOrigin;
     }
 
     public void moveUp()
@@ -245,7 +250,15 @@ public class Board extends JPanel {
                 //Else if the current block is not EMPTY and the block below it is not EMPTY and the block is falling
                 else if (!"EMPTY".equals(levelArray[x][y+1].color) &&!"EMPTY".equals(levelArray[x][y].color) && levelArray[x][y].falling) {
                     levelArray[x][y].falling = false;
-                    adjacencyCheck(x, y);
+                    if(adjacencyCheck(x, y) == true)
+                    {
+                        if(comboTimer <= 0)
+                            comboStreak = 1;
+                        else
+                            comboStreak++;
+                        comboTimer = DEFAULT_COMBO_TIMER;
+                        
+                    }
                 }
             }
         }
@@ -261,8 +274,14 @@ public class Board extends JPanel {
         {
             levelArray[x1][y] = levelArray[x2][y];
             levelArray[x2][y] = temp;
-            adjacencyCheck(x1, y);
-            adjacencyCheck(x2, y);
+            //these if statements fix the error when you move a same colored block
+            // to 2 same colored block, and it would trigger 3 in a row, but the 
+            // moved block should fall instead because you moved it to a column that
+            // was empty.
+            if(y + 1 < MAX_Y && levelArray[x1][y + 1].color != "EMPTY")
+                adjacencyCheck(x1, y);
+            if(y + 1 < MAX_Y && levelArray[x2][y + 1].color != "EMPTY")
+                adjacencyCheck(x2, y);
         }
     }
     
@@ -310,7 +329,11 @@ public class Board extends JPanel {
                         moveUp();
                         generateRow();
                     }
-                    
+                    if(comboTimer > 0)
+                        comboTimer --;
+                    else
+                        comboStreak = 0;
+                   System.out.println(comboStreak);
                 }
                 catch (Throwable e)
                 {

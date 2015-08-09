@@ -287,65 +287,21 @@ public class EnemyAI
                 }
                 else
                 {
-                    bestMatch.setSize(matches.size());
-                    //bestMatch.addAll(0, matches);
-                    Collections.copy(bestMatch, matches);
-                    System.out.println("BestMatch: " + bestMatch.size());//bestMatch.size());
-                    /*
-                    for(int j = 0; j < matches.size(); j++)
-                    {
-                        if(Math.abs(matches.get(j).weight) < weight)
-                        {
-                            newBestMatchFound = true;
-                            weight = Math.abs(matches.get(j).weight);
-                        }
-                    }
-                    if(newBestMatchFound == true)
+                    //if(Math.abs(matches.get(0).weight) < weight)
+                    if(calculateWeight(matches.get(0)) < weight)
                     {
                         bestMatch.setSize(matches.size());
                         //bestMatch.addAll(0, matches);
                         Collections.copy(bestMatch, matches);
                         System.out.println("BestMatch: " + bestMatch.size());//bestMatch.size());
-                        newBestMatchFound = false;
+                        matches.clear();
+                        matches.add(array.get(i));
+                        numMatches = 0;
                     }
-                    */
-                    //bestMatch = matches;
-                    //break;
-                    
-                    
+                   
                 }
                 //System.out.println(matches.size());//bestMatch.size());
             }
-            /*
-            else if(matches.get(numMatches).y + 1 != array.get(i).y && matches.size() >= 3)
-            {
-            for(int j = 0; j < matches.size(); j++)
-            {
-            if(Math.abs(matches.get(j).weight) < weight)
-            {
-            newBestMatchFound = true;
-            weight = Math.abs(matches.get(j).weight);
-            }
-            }
-            if(newBestMatchFound == true)
-            {
-            bestMatch = matches;
-            newBestMatchFound = false;
-            }
-            bestMatch.setSize(matches.size());
-            //bestMatch.addAll(0, matches);
-            Collections.copy(bestMatch, matches);
-            System.out.println(bestMatch.size());//bestMatch.size());
-            //bestMatch = matches;
-            break;
-            /*
-            results.add(matches);
-            numResults ++;
-            matches.clear();
-            matches.add(array.get(i));
-            numMatches = 0;
-            }
-            */
         }
         //System.out.println("-----------------------------------------");
         Vector<Vertex> temp;

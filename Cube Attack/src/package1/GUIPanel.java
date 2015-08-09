@@ -27,6 +27,7 @@ class GUIPanel extends Applet implements ActionListener{
     public JLabel banner;
     private JLabel menu;
     private JFrame game = buildFrame();
+    JLabel ComboStreakDisplay = new JLabel();
     public GUIPanel() 
     {
         menu = new JLabel();
@@ -50,19 +51,22 @@ class GUIPanel extends Applet implements ActionListener{
     public void startGame(){
         game.remove(menu);
         b1 = new Board(true);
-        //b1.decreaseTime();
         b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
         b2 = new Board(false);
         //b2.decreaseTime();
         b2.setBounds(b2.WIDTH + 200,0,b2.WIDTH,b2.HEIGHT);
         banner = new JLabel();
         banner.setBounds(b1.WIDTH, 0, WIDTH-b1.WIDTH-b2.WIDTH,b1.HEIGHT);
-        banner.setIcon(new ImageIcon("src/resources/BANNER.png"));
+        //banner.setIcon(new ImageIcon("src/resources/BANNER.png"));
         game.getContentPane().add(banner);
         game.getContentPane().add(b1);
         game.getContentPane().add(b2);
+        ComboStreakDisplay.setBounds(game.getWidth() / 2, game.getHeight() / 2, 50 , 50);
+        //game.getContentPane().add(ComboStreakDisplay);
+        ComboStreakDisplay.setText(String.valueOf(b2.comboStreak));
+        game.getContentPane().add(ComboStreakDisplay);
         game.repaint();
-        //decreaseTime();
+        decreaseTime();
         
     }
 
@@ -71,15 +75,8 @@ class GUIPanel extends Applet implements ActionListener{
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-
-                if(mSeconds > 9 )
-                {
-                    seconds++;
-                    mSeconds = 0;
-                }
-                else
-                    mSeconds++;
-                System.out.println("fucskfjasd;lfkjas;d");
+                ComboStreakDisplay.setText(String.valueOf(b2.comboStreak));
+                //System.out.println("fucskfjasd;lfkjas;d");
                 repaint();
             }
         }, 0, 100, TimeUnit.MILLISECONDS);
