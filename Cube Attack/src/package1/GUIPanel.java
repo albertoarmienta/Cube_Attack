@@ -1,5 +1,4 @@
 package package1;
-
 import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -32,7 +31,7 @@ class GUIPanel extends Applet implements ActionListener{
     {
         menu = new JLabel();
         menu.setBounds(0,0,WIDTH,HEIGHT);
-        menu.setIcon(new ImageIcon("src/resources/MENU.png"));
+        menu.setIcon(new ImageIcon(getClass().getResource("MENU.png")));
         game.getContentPane().add(menu);
         setFocusable(true);
         game.addKeyListener(new TAdapter());
@@ -48,9 +47,33 @@ class GUIPanel extends Applet implements ActionListener{
         window.pack();
         return window;
     }
-    public void startGame(){
+    public void startGame1(){
+        gameState = 1;
         game.remove(menu);
-        b1 = new Board(true);
+        b1 = new Board(false);
+        //b1.decreaseTime();
+        b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
+        b2 = new Board(true);
+        //b2.decreaseTime();
+        b2.setBounds(b2.WIDTH + 200,0,b2.WIDTH,b2.HEIGHT);
+        banner = new JLabel();
+        banner.setBounds(b1.WIDTH, 0, WIDTH-b1.WIDTH-b2.WIDTH,b1.HEIGHT);
+        //banner.setIcon(new ImageIcon(getClass().getResource("BANNER.png")));
+        game.getContentPane().add(banner);
+        game.getContentPane().add(b1);
+        game.getContentPane().add(b2);
+        ComboStreakDisplay.setBounds(game.getWidth() / 2, game.getHeight() / 2, 50 , 50);
+        ComboStreakDisplay.setText(String.valueOf(b1.comboStreak));
+        game.getContentPane().add(ComboStreakDisplay);
+        game.repaint();
+        decreaseTime();
+        
+    }
+    public void startGame2(){
+        gameState = 2;
+        game.remove(menu);
+        b1 = new Board(false);
+        //b1.decreaseTime();
         b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
         b2 = new Board(false);
         //b2.decreaseTime();
@@ -63,7 +86,7 @@ class GUIPanel extends Applet implements ActionListener{
         game.getContentPane().add(b2);
         ComboStreakDisplay.setBounds(game.getWidth() / 2, game.getHeight() / 2, 50 , 50);
         //game.getContentPane().add(ComboStreakDisplay);
-        ComboStreakDisplay.setText(String.valueOf(b2.comboStreak));
+        ComboStreakDisplay.setText(String.valueOf(b1.comboStreak));
         game.getContentPane().add(ComboStreakDisplay);
         game.repaint();
         decreaseTime();
@@ -75,7 +98,7 @@ class GUIPanel extends Applet implements ActionListener{
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                ComboStreakDisplay.setText(String.valueOf(b2.comboStreak));
+                ComboStreakDisplay.setText(String.valueOf(b1.comboStreak));
                 //System.out.println("fucskfjasd;lfkjas;d");
                 repaint();
             }
@@ -108,43 +131,77 @@ class GUIPanel extends Applet implements ActionListener{
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
             switch(key){
-                case KeyEvent.VK_ENTER:
+                case KeyEvent.VK_1:
                     if(gameState == 1){
                     //b1.moveUp();
                     //b2.moveUp();
                     }
                     else if(gameState==0)
                     {
-                        startGame();
-                        gameState = 1;
+                        startGame1();
+                       
+                    }
+                    break;
+                case KeyEvent.VK_2:
+                    if(gameState == 1){
+                    //b1.moveUp();
+                    //b2.moveUp();
+                    }
+                    else if(gameState==0)
+                    {
+                        startGame2();
+                       
                     }
                     break;
                 case KeyEvent.VK_SPACE:
-                    if(gameState == 1){
-                    b2.swapTargets();
-                    //b2.adjacencyCheck( b2.levelCursor.getCursorx(),  b2.levelCursor.getCursory());
-                    //b2.adjacencyCheck( b2.levelCursor.getCursor2x(),  b2.levelCursor.getCursory());
-                    }
+                    if(gameState == 1)
+                    b1.swapTargets();
+                    else if (gameState == 2)
+                        b1.swapTargets();
                     break;
                 case KeyEvent.VK_UP:
-                    if(gameState == 1){
-                     b2.levelCursor.moveUp();
-                    }
+                    if(gameState == 1)
+                        b1.levelCursor.moveUp();
+                     else if (gameState == 2)
+                         b2.levelCursor.moveUp();
                     break;
                 case KeyEvent.VK_DOWN:
-                    if(gameState == 1){
-                     b2.levelCursor.moveDown();
-                    }
+                    if(gameState == 1)
+                     b1.levelCursor.moveDown();
+                    else if (gameState == 2)
+                         b2.levelCursor.moveDown();
                     break;
                 case KeyEvent.VK_LEFT:
-                    if(gameState == 1){
-                     b2.levelCursor.moveLeft();
-                    }
+                    if(gameState == 1)
+                     b1.levelCursor.moveLeft();
+                    else if (gameState == 2)
+                         b2.levelCursor.moveLeft();
                     break;
                 case KeyEvent.VK_RIGHT:
-                    if(gameState == 1){
-                     b2.levelCursor.moveRight();
-                    }
+                    if(gameState == 1)
+                     b1.levelCursor.moveRight();
+                    else if (gameState == 2)
+                         b2.levelCursor.moveRight();
+                    break;
+                case KeyEvent.VK_W:
+                    if (gameState == 2)
+                         b1.levelCursor.moveUp();
+                    break;
+                case KeyEvent.VK_S:
+                    if (gameState == 2)
+                         b1.levelCursor.moveDown();
+                    break;
+                case KeyEvent.VK_A:
+                    if (gameState == 2)
+                         b1.levelCursor.moveLeft();
+                    break;
+                case KeyEvent.VK_D:
+                    if (gameState == 2)
+                         b1.levelCursor.moveRight();
+                    break;      
+                 case KeyEvent.VK_ENTER:
+                    if (gameState == 2)
+                         b2.swapTargets();
                     break;
                 case KeyEvent.VK_0:
                     if(gameState==1)

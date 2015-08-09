@@ -13,7 +13,7 @@ public class Cursor {
     private Image image;
 
     public Cursor() {
-        imageIcon = new ImageIcon("src/resources/cursor.png");
+        imageIcon = new ImageIcon(getClass().getResource("cursor.png"));
         image = imageIcon.getImage();
         cursor_x_left = 0;
         cursor_x_right = 1;
