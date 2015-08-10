@@ -17,7 +17,9 @@ import javax.swing.JPanel;
 //REVERSION
 
 class GUIPanel extends Applet implements ActionListener{
-    public static final int WIDTH = 1005, HEIGHT = 829;
+    //public static final int WIDTH = 1005, HEIGHT = 829;
+    public static final int WIDTH = 600, HEIGHT = 600;
+    public static final int BANNER_WIDTH = 100;
     public int gameState = 0;
     public Board b1;
     public int seconds = 0;
@@ -55,7 +57,7 @@ class GUIPanel extends Applet implements ActionListener{
         b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
         b2 = new Board(true);
         //b2.decreaseTime();
-        b2.setBounds(b2.WIDTH + 200,0,b2.WIDTH,b2.HEIGHT);
+        b2.setBounds(b2.WIDTH + BANNER_WIDTH,0,b2.WIDTH,b2.HEIGHT);
         banner = new JLabel();
         banner.setBounds(b1.WIDTH, 0, WIDTH-b1.WIDTH-b2.WIDTH,b1.HEIGHT);
         //banner.setIcon(new ImageIcon(getClass().getResource("BANNER.png")));

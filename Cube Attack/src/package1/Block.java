@@ -91,7 +91,7 @@ public class Block extends Rectangle {
                 imageIcon = new ImageIcon(getClass().getResource("BLACK_2.png"));
                 break;
             case "EXCLAM":
-                imageIcon = new ImageIcon(getClass().getResource("EXCLAM.png"));
+                imageIcon = new ImageIcon(getClass().getResource("EXCLAM_2.png"));
                 break;
         }
         this.color = "PURP";

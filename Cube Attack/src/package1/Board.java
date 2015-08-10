@@ -9,16 +9,15 @@ import javax.swing.*;
 
 public class Board extends JPanel {
 
-    public static final int WIDTH = 400, HEIGHT = 800;
-    //private JLabel background;
-    /* SIZE OF THE GRID */
-    public static final int MAX_X = 8, MAX_Y = 17;
+    //public static final int WIDTH = 400, HEIGHT = 800;
+    public static final int WIDTH = GUIPanel.WIDTH/2 - (GUIPanel.BANNER_WIDTH/2), HEIGHT = GUIPanel.HEIGHT;
+    private static final int BLOCK_SIZE = 35;
+    public static final int MAX_X = WIDTH/BLOCK_SIZE, MAX_Y = HEIGHT/BLOCK_SIZE;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
     public Cursor levelCursor = new Cursor();
     public boolean moveable = true;
     private final int MAPX_SIZE = WIDTH;
     private final int MAPY_SIZE = HEIGHT;
-    private final int BLOCK_SIZE = 50;
     private String timeStr = "Time: ";
     private static int timeLeft = 10000;
     private static boolean gameOver = false;
@@ -369,14 +368,15 @@ public class Board extends JPanel {
         for (int x = 0; x < levelArray.length; x++) {
             for (int y = 0; y < levelArray[0].length; y++) {
                 if (levelArray[x][y] instanceof Block) {
-                    g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, this);
+                    //g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, this);
+                    g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, BLOCK_SIZE, BLOCK_SIZE, this);
                     //g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y, this);
                 }
                 
             }
         }
         //Draws the cursor
-        g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE - moveUpOffSet, this);
+        g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE - moveUpOffSet,BLOCK_SIZE*2,BLOCK_SIZE, this);
         //g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE, this);
     }
 }
