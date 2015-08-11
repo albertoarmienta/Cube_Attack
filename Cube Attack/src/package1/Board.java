@@ -10,9 +10,9 @@ import javax.swing.*;
 public class Board extends JPanel {
 
     //public static final int WIDTH = 400, HEIGHT = 800;
-    public static final int WIDTH = GUIPanel.WIDTH/2 - (GUIPanel.BANNER_WIDTH/2), HEIGHT = GUIPanel.HEIGHT;
-    private static final int BLOCK_SIZE = 35;
-    public static final int MAX_X = WIDTH/BLOCK_SIZE, MAX_Y = HEIGHT/BLOCK_SIZE;
+    public static int WIDTH = (GUIPanel.WIDTH/2) - (GUIPanel.BANNER_WIDTH/2), HEIGHT = GUIPanel.HEIGHT;
+    public static final int MAX_X = 8, MAX_Y = 18;
+    private static int BLOCK_SIZE = WIDTH/MAX_X;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
     public Cursor levelCursor = new Cursor();
     public boolean moveable = true;
@@ -26,7 +26,7 @@ public class Board extends JPanel {
     private ImageIcon backgroundIcon = new ImageIcon(getClass().getResource("background.jpg"));
     private Image background = backgroundIcon.getImage();
 
-    int originalMoveUpTimer = 200;
+    int originalMoveUpTimer = 400;
     public int comboTimer = 0;
     public int DEFAULT_COMBO_TIMER = 200;
     int moveUpTimer = originalMoveUpTimer;
@@ -39,6 +39,9 @@ public class Board extends JPanel {
     private EnemyAI AIHandler;
 
     public Board(boolean AI) {
+        System.out.println(MAPY_SIZE);
+        System.out.println(MAX_Y);
+        System.out.println(levelArray[0].length);
         setBorder(BorderFactory.createLineBorder(Color.black));
         moveUpInterval = (int)Math.ceil((float)originalMoveUpTimer / (float)BLOCK_SIZE);
         resetArray();
@@ -51,7 +54,11 @@ public class Board extends JPanel {
             AIHandler = new EnemyAI(levelArray, this);
         }
     }
-
+    public static void resizeBoard(){
+        WIDTH = (GUIPanel.WIDTH/2) - (GUIPanel.BANNER_WIDTH/2);
+        HEIGHT = GUIPanel.HEIGHT;
+        BLOCK_SIZE = WIDTH/MAX_X;
+    }
     public void resetArray() {
         for (int x = 0; x < MAX_X; x++) {
             for (int y = 0; y < MAX_Y; y++) {
@@ -332,7 +339,7 @@ public class Board extends JPanel {
                         comboTimer --;
                     else
                         comboStreak = 0;
-                   System.out.println(comboStreak);
+                   //System.out.println(comboStreak);
                 }
                 catch (Throwable e)
                 {

@@ -3,8 +3,11 @@ import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.Executors;
@@ -17,9 +20,10 @@ import javax.swing.JPanel;
 //REVERSION
 
 class GUIPanel extends Applet implements ActionListener{
-    //public static final int WIDTH = 1005, HEIGHT = 829;
-    public static final int WIDTH = 600, HEIGHT = 600;
-    public static final int BANNER_WIDTH = 100;
+    //public static final int WIDTH = 1000, HEIGHT = 825;
+    public static int WIDTH = 600, HEIGHT = 525;
+    public static final double RATIO = WIDTH/HEIGHT;
+    public static int BANNER_WIDTH = WIDTH/6;
     public int gameState = 0;
     public Board b1;
     public int seconds = 0;
@@ -33,18 +37,52 @@ class GUIPanel extends Applet implements ActionListener{
     {
         menu = new JLabel();
         menu.setBounds(0,0,WIDTH,HEIGHT);
-        menu.setIcon(new ImageIcon(getClass().getResource("MENU.png")));
+        ImageIcon menuIcon = new ImageIcon(getClass().getResource("MENU.png"));
+        Image scaledIcon = menuIcon.getImage().getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_SMOOTH);
+        menu.setIcon(new ImageIcon(scaledIcon));
         game.getContentPane().add(menu);
         setFocusable(true);
         game.addKeyListener(new TAdapter());
         game.setVisible(true);
         game.setLocationRelativeTo(null);
+        game.addComponentListener(new ComponentListener(){
+            @Override
+            public void componentResized(ComponentEvent e) {
+             //System.out.println(game.getContentPane().getHeight());
+             //System.out.println(game.getContentPane().getWidth());
+                HEIGHT = game.getContentPane().getHeight();
+                WIDTH = game.getContentPane().getWidth();
+                //WIDTH =  (int)(HEIGHT*RATIO);
+                //game.setSize(WIDTH, HEIGHT);
+               
+                BANNER_WIDTH = WIDTH/6;
+                b1.setBounds(0,0,(WIDTH/2)-(BANNER_WIDTH/2),HEIGHT);
+                b2.setBounds(b1.WIDTH + BANNER_WIDTH,0,(WIDTH/2)-(BANNER_WIDTH/2),HEIGHT);
+                Board.resizeBoard();
+             
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+               
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+              
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+               
+            }
+        });
     }
     public JFrame buildFrame() {
         JFrame window = new JFrame("Cube Attack");
         window.setLayout(null);
-        window.setPreferredSize(new Dimension( WIDTH, HEIGHT));
-        window.setResizable(false);
+        window.getContentPane().setPreferredSize(new Dimension( WIDTH, HEIGHT));
+        //window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.pack();
         return window;
@@ -79,7 +117,7 @@ class GUIPanel extends Applet implements ActionListener{
         b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
         b2 = new Board(false);
         //b2.decreaseTime();
-        b2.setBounds(b2.WIDTH + 200,0,b2.WIDTH,b2.HEIGHT);
+        b2.setBounds(b2.WIDTH + BANNER_WIDTH,0,b2.WIDTH,b2.HEIGHT);
         banner = new JLabel();
         banner.setBounds(b1.WIDTH, 0, WIDTH-b1.WIDTH-b2.WIDTH,b1.HEIGHT);
         //banner.setIcon(new ImageIcon("src/resources/BANNER.png"));
@@ -123,6 +161,7 @@ class GUIPanel extends Applet implements ActionListener{
     public void actionPerformed(ActionEvent ae) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
     
  private class TAdapter extends KeyAdapter {
 
