@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 class GUIPanel extends Applet implements ActionListener{
     //public static final int WIDTH = 1000, HEIGHT = 825;
     public static int WIDTH = 600, HEIGHT = 525;
+    public int previousW = WIDTH, previousH = HEIGHT;
     public static final double RATIO = WIDTH/HEIGHT;
     public static int BANNER_WIDTH = WIDTH/6;
     public int gameState = 0;
@@ -52,13 +53,24 @@ class GUIPanel extends Applet implements ActionListener{
              //System.out.println(game.getContentPane().getWidth());
                 HEIGHT = game.getContentPane().getHeight();
                 WIDTH = game.getContentPane().getWidth();
+               if(WIDTH < previousW)
+                  WIDTH += (previousW - WIDTH);
+               else if (WIDTH > previousW)
+                  WIDTH -= (WIDTH - previousW);
+
+               if(HEIGHT < previousH)
+                   WIDTH -= (previousH - HEIGHT);
+               else if(HEIGHT > previousH)
+                   WIDTH += (HEIGHT - previousH);
                 //WIDTH =  (int)(HEIGHT*RATIO);
-                //game.setSize(WIDTH, HEIGHT);
                
                 BANNER_WIDTH = WIDTH/6;
                 b1.setBounds(0,0,(WIDTH/2)-(BANNER_WIDTH/2),HEIGHT);
                 b2.setBounds(b1.WIDTH + BANNER_WIDTH,0,(WIDTH/2)-(BANNER_WIDTH/2),HEIGHT);
                 Board.resizeBoard();
+               
+               previousH = HEIGHT;
+               previousW = WIDTH;
              
             }
 
@@ -140,6 +152,10 @@ class GUIPanel extends Applet implements ActionListener{
             public void run() {
                 ComboStreakDisplay.setText(String.valueOf(b1.comboStreak));
                 //System.out.println("fucskfjasd;lfkjas;d");
+                if(game.getContentPane().getWidth() > b1.WIDTH + BANNER_WIDTH + b2.WIDTH)
+                   game.setSize(WIDTH, HEIGHT);
+               else if(game.getContentPane().getWidth() < b1.WIDTH + BANNER_WIDTH + b2.WIDTH)
+                   game.setSize(WIDTH, HEIGHT);
                 repaint();
             }
         }, 0, 100, TimeUnit.MILLISECONDS);
