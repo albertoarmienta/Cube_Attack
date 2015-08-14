@@ -117,6 +117,8 @@ public class Board extends JPanel {
     
     
     public boolean adjacencyCheck(int x, int y) {
+        if(levelArray[x][y].color == "BRICK")
+            return false;
         int xref = x;
         int yref = y;
         int numSameL = 0;
