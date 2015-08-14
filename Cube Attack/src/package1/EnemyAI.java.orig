@@ -293,7 +293,7 @@ public class EnemyAI
                         bestMatch.setSize(matches.size());
                         //bestMatch.addAll(0, matches);
                         Collections.copy(bestMatch, matches);
-                        //System.out.println("BestMatch: " + bestMatch.size());//bestMatch.size());
+                        System.out.println("BestMatch: " + bestMatch.size());//bestMatch.size());
                         matches.clear();
                         matches.add(array.get(i));
                         numMatches = 0;

@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+//REVERSION
 
 class GUIPanel extends Applet implements ActionListener{
     //public static final int WIDTH = 1000, HEIGHT = 825;
@@ -51,13 +53,10 @@ class GUIPanel extends Applet implements ActionListener{
              //System.out.println(game.getContentPane().getWidth());
                 HEIGHT = game.getContentPane().getHeight();
                 WIDTH = game.getContentPane().getWidth();
-                /*
                if(WIDTH < previousW)
                   WIDTH += (previousW - WIDTH);
                else if (WIDTH > previousW)
                   WIDTH -= (WIDTH - previousW);
-                */
-                WIDTH = previousW;
 
                if(HEIGHT < previousH)
                    WIDTH -= (previousH - HEIGHT);
@@ -66,15 +65,12 @@ class GUIPanel extends Applet implements ActionListener{
                 //WIDTH =  (int)(HEIGHT*RATIO);
                
                 BANNER_WIDTH = WIDTH/6;
-                if(b1 != null)
-                    b1.setBounds(0,0,(WIDTH/2)-(BANNER_WIDTH/2),HEIGHT);
-                if(b2 != null)
-                    b2.setBounds(b1.WIDTH + BANNER_WIDTH,0,(WIDTH/2)-(BANNER_WIDTH/2),HEIGHT);
+                b1.setBounds(0,0,(WIDTH/2)-(BANNER_WIDTH/2),HEIGHT);
+                b2.setBounds(b1.WIDTH + BANNER_WIDTH,0,(WIDTH/2)-(BANNER_WIDTH/2),HEIGHT);
                 Board.resizeBoard();
                
-               //game.setSize(WIDTH, HEIGHT);
-               //previousH = HEIGHT;
-               //previousW = WIDTH;
+               previousH = HEIGHT;
+               previousW = WIDTH;
              
             }
 
@@ -106,10 +102,10 @@ class GUIPanel extends Applet implements ActionListener{
     public void startGame1(){
         gameState = 1;
         game.remove(menu);
-        b1 = new Board(false, this);
+        b1 = new Board(false);
         //b1.decreaseTime();
         b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
-        b2 = new Board(true, this);
+        b2 = new Board(true);
         //b2.decreaseTime();
         b2.setBounds(b2.WIDTH + BANNER_WIDTH,0,b2.WIDTH,b2.HEIGHT);
         banner = new JLabel();
@@ -128,10 +124,10 @@ class GUIPanel extends Applet implements ActionListener{
     public void startGame2(){
         gameState = 2;
         game.remove(menu);
-        b1 = new Board(false, this);
+        b1 = new Board(false);
         //b1.decreaseTime();
         b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
-        b2 = new Board(false, this);
+        b2 = new Board(false);
         //b2.decreaseTime();
         b2.setBounds(b2.WIDTH + BANNER_WIDTH,0,b2.WIDTH,b2.HEIGHT);
         banner = new JLabel();
@@ -156,12 +152,10 @@ class GUIPanel extends Applet implements ActionListener{
             public void run() {
                 ComboStreakDisplay.setText(String.valueOf(b1.comboStreak));
                 //System.out.println("fucskfjasd;lfkjas;d");
-                /*
                 if(game.getContentPane().getWidth() > b1.WIDTH + BANNER_WIDTH + b2.WIDTH)
-                   game.setSize(b1.WIDTH + BANNER_WIDTH + b2.WIDTH, HEIGHT);
+                   game.setSize(WIDTH, HEIGHT);
                else if(game.getContentPane().getWidth() < b1.WIDTH + BANNER_WIDTH + b2.WIDTH)
-                   game.setSize(b1.WIDTH + BANNER_WIDTH + b2.WIDTH, HEIGHT);
-                */
+                   game.setSize(WIDTH, HEIGHT);
                 repaint();
             }
         }, 0, 100, TimeUnit.MILLISECONDS);
@@ -277,39 +271,4 @@ class GUIPanel extends Applet implements ActionListener{
             
         }
     }
-     // This function is called within the board class, and it will pass a
-     // reference to itself. Always put blocks on opposite board
-     public void addBricks(Board whichBoard, int comboSize)
-     {
-         //System.out.println("yo");
-         //b1 is left board
-        if(whichBoard == b1)
-        {
-            b2.generateBricks(comboSize);    
-            /*
-            for(int y = 1; b2.highestBlock - y > 0 && y <= comboSize; y++)
-            {
-            for(int x = 0; x < Board.MAX_X; x++)
-            {
-            b2.levelArray[x][b2.highestBlock - y] = new Block("BRICK");
-            }
-            }
-            b2.lowestBrickY = b2.highestBlock - 1;
-            //System.out.println(b2.lowestBrickY + " " + b2.highestBlock);
-            */
-        }
-        else if(whichBoard == b2)
-        {
-            for(int y = 1; b1.highestBlock - y > 0 && y <= comboSize; y++)
-            {
-                for(int x = 0; x < Board.MAX_X; x++)
-                {
-                    b1.levelArray[x][b1.highestBlock - y] = new Block("BRICK");
-                }
-            }
-            b1.lowestBrickY = b1.highestBlock - 1;
-            //System.out.println(b2.lowestBrickY + " " + b2.highestBlock);
-        }
-        
-     }
 }

@@ -26,9 +26,6 @@ public class Board extends JPanel {
     private ImageIcon backgroundIcon = new ImageIcon(getClass().getResource("background.jpg"));
     private Image background = backgroundIcon.getImage();
 
-    public GUIPanel guiPanel;
-    public int highestBlock = MAX_Y - 1;
-    public int lowestBrickY = MAX_Y - 1;
     int originalMoveUpTimer = 400;
     public int comboTimer = 0;
     public int DEFAULT_COMBO_TIMER = 200;
@@ -36,14 +33,12 @@ public class Board extends JPanel {
     public boolean canMoveUp = true;
     public int moveUpInterval = 0;
     public int moveUpOffSet = 0;
+
     public int comboStreak = 0;
 
     private EnemyAI AIHandler;
-    private Board thisBoard;
 
-    public Board(boolean AI, GUIPanel GUI) {
-        guiPanel = GUI;
-        thisBoard = this;
+    public Board(boolean AI) {
         System.out.println(MAPY_SIZE);
         System.out.println(MAX_Y);
         System.out.println(levelArray[0].length);
@@ -72,7 +67,19 @@ public class Board extends JPanel {
         }
     }
 
-
+    public boolean canFall() {
+        for (int x = 0; x < MAX_X; x++) {
+            for (int y = 0; y < MAX_Y; y++) {
+                if (levelArray[x][y].falling == true) {
+                    return false;
+                }
+                if (levelArray[x][y].needsRemoval) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     public void setArray(int x, int y, Block a) {
         levelArray[x][y] = a;
@@ -102,19 +109,6 @@ public class Board extends JPanel {
         for (int x = 0; x < MAX_X; x++) {
             adjacencyCheck(x, MAX_Y - 2);
         }
-    }
-
-    public void generateBricks(int comboSize)
-    {
-        for(int y = 1; highestBlock - y > 0 && y <= comboSize; y++)
-        {
-            for(int x = 0; x < MAX_X; x++)
-            {
-                levelArray[x][highestBlock - y] = new Block("BRICK");
-            }
-        }
-        lowestBrickY = highestBlock - 1;
-        
     }
     
     
@@ -194,20 +188,14 @@ public class Board extends JPanel {
         }
         return deleteOrigin;
     }
-    
+
     public void moveUp()
     {
-        boolean existsBricks = false;
         for (int x = 0; x < MAX_X; x++) {
             for (int y = 1; y < MAX_Y; y++) {
                 levelArray[x][y - 1] = levelArray[x][y];
-                if(levelArray[x][y - 1].color == "BRICK")
-                    existsBricks = true;
-                
             }
         }
-        if(existsBricks == true)
-            lowestBrickY--;
         levelCursor.moveUp();
     }
     private void removeBlock() {
@@ -218,15 +206,13 @@ public class Board extends JPanel {
             public void run() {
                 for (int x = 0; x < levelArray.length; x++) {
                     for (int y = 0; y < levelArray[0].length; y++) {
-                        if (levelArray[x][y].needsRemoval && levelArray[x][y].delayTime <= 0)
-                        {
+                        if (levelArray[x][y].needsRemoval && levelArray[x][y].delayTime <= 0) {
                             Block temp = levelArray[x][y] ;
                             levelArray[x][y] = new Block("EMPTY");
                             temp = null;
-                        }
-                        else if (levelArray[x][y].needsRemoval)
-                        {
+                        } else if (levelArray[x][y].needsRemoval) {
                             levelArray[x][y].delayTime--;
+                            
                         }
                     }
                 }
@@ -254,14 +240,12 @@ public class Board extends JPanel {
     
     public void shiftDown() {
         boolean moveUp = true;
-        boolean bricksMovedDown = false;
         for (int x = MAX_X - 1; x >= 0; x--) {
-            if(!"EMPTY".equals(levelArray[x][MAX_Y-1].color) && !"BRICK".equals(levelArray[x][MAX_Y-1].color))
+            if(!"EMPTY".equals(levelArray[x][MAX_Y-1].color))
                 adjacencyCheck(x,MAX_Y-1);
             for (int y = MAX_Y - 2; y >= 0; y--) {
                 //If the current block is not EMPTY and the block below it IS EMPTY
-                if (!"EMPTY".equals(levelArray[x][y].color) && !"BRICK".equals(levelArray[x][y].color)
-                        && "EMPTY".equals(levelArray[x][y + 1].color)) {
+                if (!"EMPTY".equals(levelArray[x][y].color) && "EMPTY".equals(levelArray[x][y + 1].color)) {
                     levelArray[x][y].falling = true;
                     Block temp = levelArray[x][y + 1];
                     levelArray[x][y + 1] = levelArray[x][y];
@@ -270,8 +254,7 @@ public class Board extends JPanel {
                     //moveUpTimer = originalMoveUpTimer;
                 }
                 //Else if the current block is not EMPTY and the block below it is not EMPTY and the block is falling
-                else if (!"EMPTY".equals(levelArray[x][y+1].color) &&!"EMPTY".equals(levelArray[x][y].color)
-                        && levelArray[x][y].falling) {
+                else if (!"EMPTY".equals(levelArray[x][y+1].color) &&!"EMPTY".equals(levelArray[x][y].color) && levelArray[x][y].falling) {
                     levelArray[x][y].falling = false;
                     if(adjacencyCheck(x, y) == true)
                     {
@@ -283,21 +266,8 @@ public class Board extends JPanel {
                         
                     }
                 }
-                else if("BRICK".equals(levelArray[x][y].color) &&
-                        //(lowestBrickY - lowestBrickY) != 1)
-                        (highestBlock - lowestBrickY)> 1)
-                {
-                    System.out.println("fucker");
-                    Block temp = levelArray[x][y + 1];
-                    levelArray[x][y + 1] = levelArray[x][y];
-                    levelArray[x][y] = temp;
-                    bricksMovedDown = true;
-                }
-                System.out.println(lowestBrickY + " " + highestBlock);
             }
         }
-        if(bricksMovedDown == true)
-            lowestBrickY ++;
         canMoveUp = moveUp;
     }
     
@@ -311,7 +281,7 @@ public class Board extends JPanel {
             levelArray[x1][y] = levelArray[x2][y];
             levelArray[x2][y] = temp;
             //these if statements fix the error when you move a same colored block
-            // to 2 same colored block, and it would trigger 3 in a row, but the
+            // to 2 same colored block, and it would trigger 3 in a row, but the 
             // moved block should fall instead because you moved it to a column that
             // was empty.
             if(y + 1 < MAX_Y && levelArray[x1][y + 1].color != "EMPTY")
@@ -349,46 +319,35 @@ public class Board extends JPanel {
     public class DecreaseTimeThread implements Runnable
     {
         
-        @Override
-        public void run() {
-            try{
-                if(canMoveUp && moveUpTimer > 0)
-                {
-                    if(moveUpTimer % moveUpInterval == 0)
-                        moveUpOffSet += 1;
-                    moveUpTimer -= 1;
-                }
-                else if (canMoveUp && moveUpTimer <= 0)
-                {
-                    moveUpOffSet = 0;
-                    moveUpTimer = originalMoveUpTimer;
-                    moveUp();
-                    generateRow();
-                }
-                if(comboTimer > 0)
-                    comboTimer --;
-                else
-                {
-                    if(comboStreak > 0)
+            @Override
+            public void run() {
+                try{
+                    if(canMoveUp && moveUpTimer > 0)
                     {
-                        //lowestBrickY = highestBlock - 1;
-                        addBricks();
+                        if(moveUpTimer % moveUpInterval == 0)
+                            moveUpOffSet += 1;
+                        moveUpTimer -= 1;
                     }
-                    comboStreak = 0;
+                    else if (canMoveUp && moveUpTimer <= 0)
+                    {
+                        moveUpOffSet = 0;
+                        moveUpTimer = originalMoveUpTimer;
+                        moveUp();
+                        generateRow();
+                    }
+                    if(comboTimer > 0)
+                        comboTimer --;
+                    else
+                        comboStreak = 0;
+                   //System.out.println(comboStreak);
                 }
-                //System.out.println(comboStreak);
-            }
-            catch (Throwable e)
-            {
-                System.out.println("DecreaseTimeThread:" + e);
-            }
+                catch (Throwable e)
+                {
+                    System.out.println("DecreaseTimeThread:" + e);
+                }
             repaint();
-        }
-        
-    }
-    private void addBricks()
-    {
-        guiPanel.addBricks(this, comboStreak);
+            }
+            
     }
     //
     public void decreaseTime() {
@@ -413,7 +372,6 @@ public class Board extends JPanel {
         }
         
         //Draws the blocks
-        highestBlock = MAX_Y - 1;
         for (int x = 0; x < levelArray.length; x++) {
             for (int y = 0; y < levelArray[0].length; y++) {
                 if (levelArray[x][y] instanceof Block) {
@@ -421,9 +379,6 @@ public class Board extends JPanel {
                     g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, BLOCK_SIZE, BLOCK_SIZE, this);
                     //g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y, this);
                 }
-                if((levelArray[x][y].color != "EMPTY" && levelArray[x][y].color != "BRICK")
-                        && y< highestBlock)
-                    highestBlock = y;
                 
             }
         }
