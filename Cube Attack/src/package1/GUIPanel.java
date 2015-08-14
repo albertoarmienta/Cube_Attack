@@ -307,7 +307,7 @@ class GUIPanel extends Applet implements ActionListener{
                     b1.levelArray[x][b1.highestBlock - y] = new Block("BRICK");
                 }
             }
-            b1.lowestBrickY = b1.highestBlock - 1;
+                b1.lowestBrickY = b1.highestBlock - 1;
             //System.out.println(b2.lowestBrickY + " " + b2.highestBlock);
         }
         
