@@ -269,6 +269,7 @@ class GUIPanel extends Applet implements ActionListener{
                 case KeyEvent.VK_0:
                     if(gameState==1)
                     {
+                        b1.generateBricks(1);
                         //game.dispose();
                         //gameState = 0;
                     }
@@ -286,29 +287,10 @@ class GUIPanel extends Applet implements ActionListener{
         if(whichBoard == b1)
         {
             b2.generateBricks(comboSize);    
-            /*
-            for(int y = 1; b2.highestBlock - y > 0 && y <= comboSize; y++)
-            {
-            for(int x = 0; x < Board.MAX_X; x++)
-            {
-            b2.levelArray[x][b2.highestBlock - y] = new Block("BRICK");
-            }
-            }
-            b2.lowestBrickY = b2.highestBlock - 1;
-            //System.out.println(b2.lowestBrickY + " " + b2.highestBlock);
-            */
         }
         else if(whichBoard == b2)
         {
-            for(int y = 1; b1.highestBlock - y > 0 && y <= comboSize; y++)
-            {
-                for(int x = 0; x < Board.MAX_X; x++)
-                {
-                    b1.levelArray[x][b1.highestBlock - y] = new Block("BRICK");
-                }
-            }
-                b1.lowestBrickY = b1.highestBlock - 1;
-            //System.out.println(b2.lowestBrickY + " " + b2.highestBlock);
+            b1.generateBricks(comboSize);    
         }
         
      }

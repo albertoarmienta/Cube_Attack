@@ -28,7 +28,6 @@ public class Board extends JPanel {
 
     public GUIPanel guiPanel;
     public int highestBlock = MAX_Y - 1;
-    public int lowestBrickY = MAX_Y - 1;
     int originalMoveUpTimer = 400;
     public int comboTimer = 0;
     public int DEFAULT_COMBO_TIMER = 200;
@@ -106,14 +105,13 @@ public class Board extends JPanel {
 
     public void generateBricks(int comboSize)
     {
-        for(int y = 1; highestBlock - y > 0 && y <= comboSize; y++)
+        for(int y = 0; y < comboSize; y++)
         {
             for(int x = 0; x < MAX_X; x++)
             {
-                levelArray[x][highestBlock - y] = new Block("BRICK");
+                levelArray[x][y] = new Block("BRICK");
             }
         }
-        lowestBrickY = highestBlock - 1;
         
     }
     
@@ -176,7 +174,7 @@ public class Board extends JPanel {
             deleteOrigin = true;
         }
         if (numSameU + numSameD >= 2) {
-            tempUp = yref - numSameU - 1;
+            tempUp = yref - numSameU;
             while (numSameU > 0) {
                 levelArray[x][y - numSameU].nextSprite();
                 numSameU--;
@@ -191,23 +189,23 @@ public class Board extends JPanel {
         if (deleteOrigin) {
             //moveUpTimer = originalMoveUpTimer;
             levelArray[x][y].nextSprite();
+            //checking if block above origin is a brick
+            if(y - 1 >= 0 && levelArray[x][y - 1].color == "BRICK")
+                bricksToBlocks(y - 1);
+            if(tempUp - 1 >= 0 && levelArray[x][tempUp - 1].color == "BRICK")
+                bricksToBlocks(tempUp - 1);
+
         }
         return deleteOrigin;
     }
     
     public void moveUp()
     {
-        boolean existsBricks = false;
         for (int x = 0; x < MAX_X; x++) {
             for (int y = 1; y < MAX_Y; y++) {
                 levelArray[x][y - 1] = levelArray[x][y];
-                if(levelArray[x][y - 1].color == "BRICK")
-                    existsBricks = true;
-                
             }
         }
-        if(existsBricks == true)
-            lowestBrickY--;
         levelCursor.moveUp();
     }
     private void removeBlock() {
@@ -235,6 +233,20 @@ public class Board extends JPanel {
         }, 0, 50, TimeUnit.MILLISECONDS);
     }
     
+    private void bricksToBlocks(int y)
+    {
+        if(y < 0 || y > MAX_Y)
+            return;
+        for(int x = 0; x < MAX_X; x++)
+        {
+            levelArray[x][y] = new Block();
+            levelArray[x][y].justSpawned = false;
+            adjacencyCheck(x, y);
+        }
+        
+        if(y - 1 >= 0 && levelArray[0][y - 1].color == "BRICK")
+            bricksToBlocks(y - 1);
+    }
     private void moveBlock() {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
@@ -254,7 +266,6 @@ public class Board extends JPanel {
     
     public void shiftDown() {
         boolean moveUp = true;
-        boolean bricksMovedDown = false;
         for (int x = MAX_X - 1; x >= 0; x--) {
             if(!"EMPTY".equals(levelArray[x][MAX_Y-1].color) && !"BRICK".equals(levelArray[x][MAX_Y-1].color))
                 adjacencyCheck(x,MAX_Y-1);
@@ -283,21 +294,15 @@ public class Board extends JPanel {
                         
                     }
                 }
-                else if("BRICK".equals(levelArray[x][y].color) &&
-                        //(lowestBrickY - lowestBrickY) != 1)
-                        (highestBlock - lowestBrickY)> 1)
+                else if("BRICK".equals(levelArray[x][y].color) && "EMPTY".equals(levelArray[x][y + 1].color) && y < highestBlock - 1)
                 {
                     System.out.println("fucker");
                     Block temp = levelArray[x][y + 1];
                     levelArray[x][y + 1] = levelArray[x][y];
                     levelArray[x][y] = temp;
-                    bricksMovedDown = true;
                 }
-                System.out.println(lowestBrickY + " " + highestBlock);
             }
         }
-        if(bricksMovedDown == true)
-            lowestBrickY ++;
         canMoveUp = moveUp;
     }
     
@@ -371,7 +376,6 @@ public class Board extends JPanel {
                 {
                     if(comboStreak > 0)
                     {
-                        //lowestBrickY = highestBlock - 1;
                         addBricks();
                     }
                     comboStreak = 0;
