@@ -154,7 +154,7 @@ public class EnemyAI
            }
        }
        
-       System.out.println("MATCH TAKEN: " + whichMatchTaken);
+       //System.out.println("MATCH TAKEN: " + whichMatchTaken);
        if(bestMatch != null)
        {
            moveCursorTo(bestMatch);

@@ -10,7 +10,7 @@ import javax.swing.*;
 public class Board extends JPanel {
 
     //public static final int WIDTH = 400, HEIGHT = 800;
-    public static int WIDTH = (GUIPanel.WIDTH/2) - (GUIPanel.BANNER_WIDTH/2), HEIGHT = GUIPanel.HEIGHT;
+    public static int WIDTH = (GUIPanel.WIDTH/2) - (MidColumn.WIDTH/2), HEIGHT = GUIPanel.HEIGHT;
     public static final int MAX_X = 8, MAX_Y = 18;
     private static int BLOCK_SIZE = WIDTH/MAX_X;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
@@ -43,9 +43,6 @@ public class Board extends JPanel {
     public Board(boolean AI, GUIPanel GUI) {
         guiPanel = GUI;
         thisBoard = this;
-        System.out.println(MAPY_SIZE);
-        System.out.println(MAX_Y);
-        System.out.println(levelArray[0].length);
         setBorder(BorderFactory.createLineBorder(Color.black));
         moveUpInterval = (int)Math.ceil((float)originalMoveUpTimer / (float)BLOCK_SIZE);
         resetArray();
@@ -59,7 +56,7 @@ public class Board extends JPanel {
         }
     }
     public static void resizeBoard(){
-        WIDTH = (GUIPanel.WIDTH/2) - (GUIPanel.BANNER_WIDTH/2);
+        WIDTH = (GUIPanel.WIDTH/2) - (MidColumn.WIDTH/2);
         HEIGHT = GUIPanel.HEIGHT;
         BLOCK_SIZE = WIDTH/MAX_X;
     }
@@ -228,7 +225,6 @@ public class Board extends JPanel {
                         }
                     }
                 }
-                //repaint();
             }
         }, 0, 50, TimeUnit.MILLISECONDS);
     }
@@ -257,7 +253,6 @@ public class Board extends JPanel {
                 }
                 catch(Throwable e)
                 {
-                    //Main.logger.error("Exception: " + e);
                     System.out.println(e);
                 }
             }
@@ -379,7 +374,6 @@ public class Board extends JPanel {
                     }
                     comboStreak = 0;
                 }
-                //System.out.println(comboStreak);
             }
             catch (Throwable e)
             {
@@ -393,7 +387,6 @@ public class Board extends JPanel {
     {
         guiPanel.addBricks(this, comboStreak);
     }
-    //
     public void decreaseTime() {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         //DecreaseTimeThread thread = new DecreaseTimeThread();
@@ -401,22 +394,10 @@ public class Board extends JPanel {
     }
     
     public void paintComponent(Graphics g) {
-        //Whatever is painted last appears on top of everything else
-        
         super.paintComponent(g);
-        
+        //Whatever is painted last appears on top of everything else
         //Draws the background image at (0,0) of this board
         g.drawImage(background, 0, 0, WIDTH, HEIGHT, this);
-        
-        /*
-        //Draws vertica and horizantal lines to create a visual grid
-        for (int i = 0; i < MAPY_SIZE / BLOCK_SIZE; i++) {
-            g.drawLine(BLOCK_SIZE * i, 0, BLOCK_SIZE * i, MAPY_SIZE);
-            g.drawLine(0, BLOCK_SIZE * i, MAPX_SIZE, BLOCK_SIZE * i);
-            
-        }
-        */
-        
         //Draws the blocks
         highestBlock = MAX_Y - 1;
         for (int x = 0; x < levelArray.length; x++) {
@@ -432,8 +413,6 @@ public class Board extends JPanel {
                 
             }
         }
-        //Draws the cursor
         g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE - moveUpOffSet,BLOCK_SIZE*2,BLOCK_SIZE, this);
-        //g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE, this);
     }
 }
