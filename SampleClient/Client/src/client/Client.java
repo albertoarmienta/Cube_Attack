@@ -6,8 +6,10 @@
  */
 package client;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,26 +19,32 @@ import java.util.logging.Logger;
  */
 public class Client {
 
-    static public String SERVER_NAME = "127.0.0.1";
+    static public String SERVER_NAME = "beartoes.ddns.net";
+    static public int PORT = 50000;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         Client c = new Client();       
-        c.start();
+        try {
+            c.start();
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public void start()
+    public void start() throws UnknownHostException, IOException
     {
-        InetSocketAddress addrs = new InetSocketAddress(SERVER_NAME, 5000);
-        Socket soc = null;
-        soc = new Socket();
+        InetSocketAddress addrs = new InetSocketAddress(SERVER_NAME, PORT);
+        Socket soc = new Socket(SERVER_NAME, PORT);
+        /*
         try {
             soc.connect(addrs);
             System.out.println("connected");
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
+                */
 
         while(true)
         {

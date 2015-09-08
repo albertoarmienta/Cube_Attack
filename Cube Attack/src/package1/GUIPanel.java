@@ -25,13 +25,18 @@ class GUIPanel extends Applet implements ActionListener{
     public static int BANNER_WIDTH = WIDTH/6;
     public int gameState = 0;
     public Board b1;
-    public int seconds = 0;
+    public int minutes  = 0;
+    public int seconds  = 0;
     public int mSeconds = 0;
     public Board b2;
     public JLabel banner;
     private JLabel menu;
     private JFrame game = buildFrame();
-    JLabel ComboStreakDisplay = new JLabel();
+    JLabel LComboStreak = new JLabel();
+    JLabel RComboStreak = new JLabel();
+    JLabel Timer = new JLabel();
+    private int DECREASE_TIME_INTERVAL = 100;//milliseconds
+    //ComboStreakDisplay.setLineWrap(true);
     public GUIPanel() 
     {
         menu = new JLabel();
@@ -72,6 +77,23 @@ class GUIPanel extends Applet implements ActionListener{
                     b2.setBounds(b1.WIDTH + BANNER_WIDTH,0,(WIDTH/2)-(BANNER_WIDTH/2),HEIGHT);
                 Board.resizeBoard();
                
+                if(banner != null)
+                    banner.setBounds(b1.WIDTH, 0, WIDTH - b1.WIDTH - b2.WIDTH, b1.HEIGHT);
+                if(LComboStreak != null)
+                {
+                    LComboStreak.setBounds(b2.WIDTH, b1.HEIGHT / 2, 
+                            (int)LComboStreak.getPreferredSize().getWidth(), (int)LComboStreak.getPreferredSize().getHeight());
+                }
+                if(RComboStreak != null)
+                {
+                    RComboStreak.setBounds(b2.WIDTH, b1.HEIGHT / 2 + LComboStreak.getHeight(), 
+                            (int)RComboStreak.getPreferredSize().getWidth(), (int)RComboStreak.getPreferredSize().getHeight());
+                }
+                if(Timer != null)
+                {
+                Timer.setBounds(b1.WIDTH, HEIGHT / 4,
+                    (int)Timer.getPreferredSize().getWidth(), (int)Timer.getPreferredSize().getHeight());
+                }
                //game.setSize(WIDTH, HEIGHT);
                //previousH = HEIGHT;
                //previousW = WIDTH;
@@ -107,21 +129,9 @@ class GUIPanel extends Applet implements ActionListener{
         gameState = 1;
         game.remove(menu);
         b1 = new Board(false, this);
-        //b1.decreaseTime();
-        b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
         b2 = new Board(true, this);
-        //b2.decreaseTime();
-        b2.setBounds(b2.WIDTH + BANNER_WIDTH,0,b2.WIDTH,b2.HEIGHT);
-        banner = new JLabel();
-        banner.setBounds(b1.WIDTH, 0, WIDTH-b1.WIDTH-b2.WIDTH,b1.HEIGHT);
-        //banner.setIcon(new ImageIcon(getClass().getResource("BANNER.png")));
-        game.getContentPane().add(banner);
-        game.getContentPane().add(b1);
-        game.getContentPane().add(b2);
-        ComboStreakDisplay.setBounds(game.getWidth() / 2, game.getHeight() / 2, 50 , 50);
-        ComboStreakDisplay.setText(String.valueOf(b1.comboStreak));
-        game.getContentPane().add(ComboStreakDisplay);
-        game.repaint();
+        //SetupDisplay() sets the boards and banners accordingly
+        SetupDisplay();
         decreaseTime();
         
     }
@@ -129,22 +139,9 @@ class GUIPanel extends Applet implements ActionListener{
         gameState = 2;
         game.remove(menu);
         b1 = new Board(false, this);
-        //b1.decreaseTime();
-        b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
         b2 = new Board(false, this);
-        //b2.decreaseTime();
-        b2.setBounds(b2.WIDTH + BANNER_WIDTH,0,b2.WIDTH,b2.HEIGHT);
-        banner = new JLabel();
-        banner.setBounds(b1.WIDTH, 0, WIDTH-b1.WIDTH-b2.WIDTH,b1.HEIGHT);
-        //banner.setIcon(new ImageIcon("src/resources/BANNER.png"));
-        game.getContentPane().add(banner);
-        game.getContentPane().add(b1);
-        game.getContentPane().add(b2);
-        ComboStreakDisplay.setBounds(game.getWidth() / 2, game.getHeight() / 2, 50 , 50);
-        //game.getContentPane().add(ComboStreakDisplay);
-        ComboStreakDisplay.setText(String.valueOf(b1.comboStreak));
-        game.getContentPane().add(ComboStreakDisplay);
-        game.repaint();
+        //SetupDisplay() sets the boards and banners accordingly
+        SetupDisplay();
         decreaseTime();
         
     }
@@ -154,29 +151,34 @@ class GUIPanel extends Applet implements ActionListener{
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                ComboStreakDisplay.setText(String.valueOf(b1.comboStreak));
-                //System.out.println("fucskfjasd;lfkjas;d");
-                /*
-                if(game.getContentPane().getWidth() > b1.WIDTH + BANNER_WIDTH + b2.WIDTH)
-                   game.setSize(b1.WIDTH + BANNER_WIDTH + b2.WIDTH, HEIGHT);
-               else if(game.getContentPane().getWidth() < b1.WIDTH + BANNER_WIDTH + b2.WIDTH)
-                   game.setSize(b1.WIDTH + BANNER_WIDTH + b2.WIDTH, HEIGHT);
-                */
-                repaint();
+                if(mSeconds < 10)
+                    mSeconds ++;
+                else
+                {
+                    mSeconds = 0;
+                    if(seconds < 59)
+                        seconds++;
+                    else
+                    {
+                        seconds = 0;
+                        minutes ++;
+                    }
+                }
+                Timer.setText("Timer: " + minutes + " \' " + seconds + " \"");
+                Timer.setSize(Timer.getPreferredSize());
+                LComboStreak.setText("Left :  \n" + String.valueOf(b1.comboStreak));
+                RComboStreak.setText("Right:  \n" + String.valueOf(b2.comboStreak));
+                //repaint();
             }
-        }, 0, 100, TimeUnit.MILLISECONDS);
+        }, 0, DECREASE_TIME_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
     /*
-    @Override
      public void paintComponent(Graphics g) {
         //Whatever is painted last appears on top of everything else
-        super.paintComponent(g);
-        //g.drawString(String.format("%d:%d",seconds, mSeconds), b2.getX() - (banner.getX()/2), HEIGHT / 2);
-        g.setColor(Color.BLUE);
-        g.drawString(String.format("%d:%d",seconds, mSeconds), WIDTH / 2, HEIGHT / 2);
-        g.drawRect(WIDTH/2, HEIGHT/2, 200, 200);
-        
+        paintComponent(g);
+        g.drawImage(new ImageIcon(getClass().getResource("BANNER.png")).getImage(),
+                Board.WIDTH,GUIPanel.HEIGHT, GUIPanel.WIDTH - Board.WIDTH * 2, GUIPanel.HEIGHT, this);
      }
     */
     @Override
@@ -278,20 +280,52 @@ class GUIPanel extends Applet implements ActionListener{
             
         }
     }
-     // This function is called within the board class, and it will pass a
-     // reference to itself. Always put blocks on opposite board
-     public void addBricks(Board whichBoard, int comboSize)
-     {
-         //System.out.println("yo");
-         //b1 is left board
+
+    private void SetupDisplay()
+    {
+        b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
+        b2.setBounds(b2.WIDTH + BANNER_WIDTH,0,b2.WIDTH,b2.HEIGHT);
+        banner = new JLabel();
+        // Displays Timer
+        //Timer.setText(minutes + " \' " + seconds + " \"");
+        Timer.setBounds(b1.WIDTH, this.HEIGHT / 4,
+                (int)Timer.getPreferredSize().getWidth(), (int)Timer.getPreferredSize().getHeight());
+
+        //Displays ComboBoxes
+        LComboStreak.setText("Left :  \n" + String.valueOf(b1.comboStreak));
+        LComboStreak.setBounds(b1.WIDTH, b1.HEIGHT / 2, 
+                (int)LComboStreak.getPreferredSize().getWidth(), (int)LComboStreak.getPreferredSize().getHeight());
+        RComboStreak.setText("Right :  \n" + String.valueOf(b1.comboStreak));
+        RComboStreak.setBounds(b1.WIDTH, b1.HEIGHT / 2 + LComboStreak.getHeight(), 
+                (int)RComboStreak.getPreferredSize().getWidth(), (int)RComboStreak.getPreferredSize().getHeight());
+
+        banner.setBounds(b1.WIDTH, 0, this.WIDTH - b1.WIDTH - b2.WIDTH, b1.HEIGHT);
+        banner.setIcon(new ImageIcon(getClass().getResource("BANNER.png")));
+        // If you want text to appear above banner, (..).add() the text before
+        // the Banner/picture
+        game.getContentPane().add(b1);
+        game.getContentPane().add(b2);
+        game.getContentPane().add(Timer);
+        game.getContentPane().add(LComboStreak);
+        game.getContentPane().add(RComboStreak);
+        game.getContentPane().add(banner);
+        game.repaint();
+        
+    }
+    // This function is called within the board class, and it will pass a
+    // reference to itself. Always put blocks on opposite board
+    public void addBricks(Board whichBoard, int comboSize)
+    {
+        //System.out.println("yo");
+        //b1 is left board
         if(whichBoard == b1)
         {
-            b2.generateBricks(comboSize);    
+            b2.generateBricks(comboSize);
         }
         else if(whichBoard == b2)
         {
-            b1.generateBricks(comboSize);    
+            b1.generateBricks(comboSize);
         }
         
-     }
+    }
 }

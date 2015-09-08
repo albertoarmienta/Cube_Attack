@@ -79,7 +79,6 @@ public class EnemyAI
 
     private void searchForMatch()
     {
-        //inverse 0 get get the largest possible 32 bit number
        int leastWeight = 1000000;
        Vertex temp;
        Vertex bestMatch = null;
@@ -126,6 +125,7 @@ public class EnemyAI
        results.add(white);
        results.add(blue);
        results.add(red);
+       String whichMatchTaken = "NONE";
        for(int i = 0; i < results.size(); i++)
        {
            for(int j = 0; j < results.get(i).size(); j++)
@@ -137,6 +137,7 @@ public class EnemyAI
                        leastWeight = Math.abs(temp.weight);
                        //System.out.println(temp.x + ", " + temp.y + " : " + temp.weight);
                        bestMatch = temp;
+                       whichMatchTaken = "Horizontal";
                    }
                }
                if((temp = matchVertical(results.get(i))) != null)
@@ -146,16 +147,16 @@ public class EnemyAI
                        leastWeight = Math.abs(temp.weight);
                        //System.out.println(temp.x + ", " + temp.y + " : " + temp.weight);
                        bestMatch = temp;
+                       whichMatchTaken = "Vertical";
                    }
                }
 
            }
        }
-
-      //bestMatch = matchVertical(results.get(0));
+       
+       System.out.println("MATCH TAKEN: " + whichMatchTaken);
        if(bestMatch != null)
        {
-           //System.out.println(bestMatch.x + ", " + bestMatch.y + " : " + bestMatch.weight);
            moveCursorTo(bestMatch);
        }
     }
@@ -236,7 +237,7 @@ public class EnemyAI
     
     public Vertex matchVertical(Vector<Vertex> array)
     {
-        if(array.isEmpty())
+        if(array.size() < 3)
             return null;
         array = insertionYSort(array);
         Vector<Vector<Vertex>> results = new Vector<Vector<Vertex>>();

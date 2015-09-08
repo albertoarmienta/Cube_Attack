@@ -71,8 +71,6 @@ public class Board extends JPanel {
         }
     }
 
-
-
     public void setArray(int x, int y, Block a) {
         levelArray[x][y] = a;
     }
@@ -298,7 +296,6 @@ public class Board extends JPanel {
                 }
                 else if("BRICK".equals(levelArray[x][y].color) && "EMPTY".equals(levelArray[x][y + 1].color) && y < highestBlock - 1)
                 {
-                    System.out.println("fucker");
                     Block temp = levelArray[x][y + 1];
                     levelArray[x][y + 1] = levelArray[x][y];
                     levelArray[x][y] = temp;
@@ -411,12 +408,14 @@ public class Board extends JPanel {
         //Draws the background image at (0,0) of this board
         g.drawImage(background, 0, 0, WIDTH, HEIGHT, this);
         
+        /*
         //Draws vertica and horizantal lines to create a visual grid
         for (int i = 0; i < MAPY_SIZE / BLOCK_SIZE; i++) {
             g.drawLine(BLOCK_SIZE * i, 0, BLOCK_SIZE * i, MAPY_SIZE);
             g.drawLine(0, BLOCK_SIZE * i, MAPX_SIZE, BLOCK_SIZE * i);
             
         }
+        */
         
         //Draws the blocks
         highestBlock = MAX_Y - 1;
