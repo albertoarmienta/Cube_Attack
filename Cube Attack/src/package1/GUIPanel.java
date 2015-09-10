@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,6 +34,7 @@ class GUIPanel extends Applet implements ActionListener{
     public JLabel banner;
     private JLabel menu;
     private JFrame game = buildFrame();
+    public Clip currentSong;
     //ComboStreakDisplay.setLineWrap(true);
     public GUIPanel() 
     {
@@ -46,6 +48,7 @@ class GUIPanel extends Applet implements ActionListener{
         game.addKeyListener(new TAdapter());
         game.setVisible(true);
         game.setLocationRelativeTo(null);
+        currentSong = audio.playTitleSong();
         
     }
     //Get the 'working' height and width of users monitor
@@ -114,11 +117,14 @@ class GUIPanel extends Applet implements ActionListener{
                     if(gameState == 1){
                     //b1.moveUp();
                     //b2.moveUp();
+                        
                     }
                     else if(gameState==0)
                     {
                         startGame1();
-                       
+                        audio.playSelectSound();
+                       audio.stopSong(currentSong);
+                       currentSong = audio.playGameSong1();
                     }
                     break;
                 case KeyEvent.VK_2:
@@ -129,60 +135,88 @@ class GUIPanel extends Applet implements ActionListener{
                     else if(gameState==0)
                     {
                         startGame2();
-                       
+                        audio.stopSong(currentSong);
+                       currentSong = audio.playGameSong1();
                     }
                     break;
                 case KeyEvent.VK_SPACE:
                     if(gameState == 1){
                     b1.swapTargets();
-                    audio.playSound1();
+                    audio.playSwapSound();
                     }
                     else if (gameState == 2)
                         b1.swapTargets();
+                        audio.playSwapSound();
                     break;
                 case KeyEvent.VK_UP:
-                    if(gameState == 1)
+                    if(gameState == 1){
                         b1.levelCursor.moveUp();
-                     else if (gameState == 2)
+                        audio.playMoveSound();
+                    }
+                     else if (gameState == 2){
                          b2.levelCursor.moveUp();
+                         audio.playMoveSound();
+                     }
                     break;
                 case KeyEvent.VK_DOWN:
-                    if(gameState == 1)
+                    if(gameState == 1){
                      b1.levelCursor.moveDown();
-                    else if (gameState == 2)
+                     audio.playMoveSound();
+                    }
+                    else if (gameState == 2){
                          b2.levelCursor.moveDown();
+                         audio.playMoveSound();
+                    }
                     break;
                 case KeyEvent.VK_LEFT:
-                    if(gameState == 1)
+                    if(gameState == 1){
                      b1.levelCursor.moveLeft();
-                    else if (gameState == 2)
+                     audio.playMoveSound();
+                    }
+                    else if (gameState == 2){
                          b2.levelCursor.moveLeft();
+                         audio.playMoveSound();
+                    }
                     break;
                 case KeyEvent.VK_RIGHT:
-                    if(gameState == 1)
+                    if(gameState == 1){
                      b1.levelCursor.moveRight();
-                    else if (gameState == 2)
+                     audio.playMoveSound();
+                    }
+                    else if (gameState == 2){
                          b2.levelCursor.moveRight();
+                         audio.playMoveSound();
+                    }
                     break;
                 case KeyEvent.VK_W:
-                    if (gameState == 2)
+                    if (gameState == 2){
                          b1.levelCursor.moveUp();
+                         audio.playMoveSound();
+                    }
                     break;
                 case KeyEvent.VK_S:
-                    if (gameState == 2)
+                    if (gameState == 2){
                          b1.levelCursor.moveDown();
+                         audio.playMoveSound();
+                    }
                     break;
                 case KeyEvent.VK_A:
-                    if (gameState == 2)
+                    if (gameState == 2){
                          b1.levelCursor.moveLeft();
+                         audio.playMoveSound();
+                    }
                     break;
                 case KeyEvent.VK_D:
-                    if (gameState == 2)
+                    if (gameState == 2){
                          b1.levelCursor.moveRight();
+                         audio.playMoveSound();
+                    }
                     break;      
                  case KeyEvent.VK_ENTER:
-                    if (gameState == 2)
+                    if (gameState == 2){
                          b2.swapTargets();
+                        audio.playSwapSound();
+                    }
                     break;
                 case KeyEvent.VK_0:
                     if(gameState==1)

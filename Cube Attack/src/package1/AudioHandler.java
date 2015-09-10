@@ -14,28 +14,24 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
 
 /**
  *
  * @author Spiggoingio
  */
 public class AudioHandler {
-    InputStream in;
-    AudioStream as;
-    AudioStream as2;
-    AudioStream as3;
-    AudioStream as4;
+    Clip songClip;
 
     
-    public void playSound1() {
+    public void playSelectSound() {
         
         try{
-            URL sound1 = getClass().getResource("test.wav");
+            URL sound1 = getClass().getResource("select.wav");
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(sound1);
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
@@ -45,5 +41,68 @@ public class AudioHandler {
             ex.printStackTrace();
         }
     }
+    public void playSwapSound() {
+        
+        try{
+            URL sound1 = getClass().getResource("swap.wav");
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(sound1);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start( );
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void playMoveSound() {
+        
+        try{
+            URL sound1 = getClass().getResource("move.wav");
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(sound1);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start( );
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    public Clip playTitleSong() {
+       
+        try{
+            URL sound1 = getClass().getResource("Thallium.wav");
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(sound1);
+            songClip = AudioSystem.getClip();
+            songClip.open(audioInputStream);
+            songClip.loop(-1); //infinite
+            songClip.start( );
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+      return songClip;     
+    }
+    public Clip playGameSong1() {
+       
+        try{
+            URL sound1 = getClass().getResource("Hydrogen.wav");
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(sound1);
+            songClip = AudioSystem.getClip();
+            songClip.open(audioInputStream);
+            songClip.loop(-1); //infinite
+            songClip.start( );
+            
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return songClip;
+               
+    }
+    public void stopSong(Clip c){
+        c.stop();
+        c.close();
+    }
+    
 
 }
