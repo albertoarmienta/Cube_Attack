@@ -36,7 +36,6 @@ public class AudioHandler {
         
         try{
             URL sound1 = getClass().getResource("test.wav");
-            System.out.println("defaultSound " + sound1);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(sound1);
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);

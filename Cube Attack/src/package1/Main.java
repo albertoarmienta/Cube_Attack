@@ -1,6 +1,6 @@
 /*
  * Cube Attack
- * v0.0.7
+ * v0.0.9
  * Spigno/Armienta
  */
 

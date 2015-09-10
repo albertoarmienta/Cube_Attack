@@ -12,7 +12,8 @@ public class Board extends JPanel {
     //public static final int WIDTH = 400, HEIGHT = 800;
     public static int WIDTH = (GUIPanel.WIDTH/2) - (MidColumn.WIDTH/2), HEIGHT = GUIPanel.HEIGHT;
     public static final int MAX_X = 8, MAX_Y = 18;
-    private static int BLOCK_SIZE = WIDTH/MAX_X;
+    public static int BLOCK_SIZE = WIDTH/MAX_X;
+    public static int OFFSET = WIDTH%BLOCK_SIZE;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
     public Cursor levelCursor = new Cursor();
     public boolean moveable = true;
@@ -23,8 +24,8 @@ public class Board extends JPanel {
     private static boolean gameOver = false;
     private static boolean gameStarted = false;
     private ScheduledExecutorService  moveUpThread;
-    private ImageIcon backgroundIcon = new ImageIcon(getClass().getResource("background.jpg"));
-    private Image background = backgroundIcon.getImage();
+    private ImageIcon backgroundIcon;
+    private Image background;
 
     public GUIPanel guiPanel;
     public int highestBlock = MAX_Y - 1;
@@ -40,7 +41,15 @@ public class Board extends JPanel {
     private EnemyAI AIHandler;
     private Board thisBoard;
 
-    public Board(boolean AI, GUIPanel GUI) {
+    public Board(boolean AI, GUIPanel GUI, int side) {
+        if(side==1){
+            backgroundIcon = new ImageIcon(getClass().getResource("BG1.png"));
+        }
+        else if(side==2){
+            backgroundIcon = new ImageIcon(getClass().getResource("BG2.png"));
+        }
+        background = backgroundIcon.getImage();
+        System.out.println(WIDTH + ":" + HEIGHT);
         guiPanel = GUI;
         thisBoard = this;
         setBorder(BorderFactory.createLineBorder(Color.black));

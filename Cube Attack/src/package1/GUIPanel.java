@@ -68,9 +68,9 @@ class GUIPanel extends Applet implements ActionListener{
     public void startGame1(){
         gameState = 1;
         game.remove(menu);
-        b1 = new Board(false, this);
-        b2 = new Board(true, this);
-        b3 = new MidColumn(this);
+        b1 = new Board(false, this,1);
+        b2 = new Board(true, this,2);
+        b3 = new MidColumn(this,1);
         //SetupDisplay() sets the boards and banners accordingly
         SetupDisplay();
         
@@ -78,9 +78,9 @@ class GUIPanel extends Applet implements ActionListener{
     public void startGame2(){
         gameState = 2;
         game.remove(menu);
-        b1 = new Board(false, this);
-        b2 = new Board(false, this);
-        b3 = new MidColumn(this);
+        b1 = new Board(false, this,1);
+        b2 = new Board(false, this,2);
+        b3 = new MidColumn(this,2);
         //SetupDisplay() sets the boards and banners accordingly
         SetupDisplay();
     }
@@ -199,9 +199,9 @@ class GUIPanel extends Applet implements ActionListener{
 
     private void SetupDisplay()
     {
-        b1.setBounds(0,0,b1.WIDTH,b1.HEIGHT);
-        b2.setBounds(b2.WIDTH + b3.WIDTH,0,b2.WIDTH,b2.HEIGHT);
-        b3.setBounds(b1.WIDTH, 0, b3.WIDTH, b1.HEIGHT);
+        b1.setBounds(0,0,b1.WIDTH-(b1.OFFSET),b1.HEIGHT);
+        b2.setBounds(b2.WIDTH + b3.WIDTH-(b1.OFFSET),0,b2.WIDTH,b2.HEIGHT);
+        b3.setBounds(b1.WIDTH-(b1.OFFSET), 0, b3.WIDTH, b1.HEIGHT);
         // If you want text to appear above banner, (..).add() the text before
         // the Banner/picture
         game.getContentPane().add(b1);

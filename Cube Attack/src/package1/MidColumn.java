@@ -26,10 +26,17 @@ public class MidColumn extends JPanel {
     private int DECREASE_TIME_INTERVAL = 100;//milliseconds
     int LComboStreak;
     int RComboStreak;
-    private ImageIcon backgroundIcon = new ImageIcon(getClass().getResource("BANNER.png"));
-    private Image background = backgroundIcon.getImage();
-    public MidColumn(GUIPanel gui){
+    private ImageIcon backgroundIcon;
+    private Image background;
+    public MidColumn(GUIPanel gui, int mode){
         mainPanel = gui;
+        if(mode == 1){
+            backgroundIcon = new ImageIcon(getClass().getResource("BANNER.png"));
+        }else if(mode==2){
+            backgroundIcon = new ImageIcon(getClass().getResource("BANNER2.png"));
+        }
+        WIDTH = GUIPanel.WIDTH/5+(Board.OFFSET*2);
+        background = backgroundIcon.getImage();
         decreaseTime();
     }
     private void decreaseTime() {
@@ -60,7 +67,7 @@ public class MidColumn extends JPanel {
         super.paintComponent(g);
         g.drawImage(background, 0, 0,WIDTH,HEIGHT, this);
         g.setFont(new Font("Courier New", Font.BOLD, 18));
-        g.setColor(Color.black);
+        g.setColor(Color.white);
         String time = "Time: " + minutes + ":";
         if(seconds<10)
             time+= "0";
