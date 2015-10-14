@@ -6,7 +6,6 @@
 
 package package1;
 
-import java.io.IOException;
 
 public class Main {
 

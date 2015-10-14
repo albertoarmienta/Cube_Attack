@@ -28,6 +28,8 @@ public class MidColumn extends JPanel {
     int RComboStreak;
     private ImageIcon backgroundIcon;
     private Image background;
+    ScheduledExecutorService timer;
+
     public MidColumn(GUIPanel gui, int mode){
         mainPanel = gui;
         if(mode == 1){
@@ -37,9 +39,10 @@ public class MidColumn extends JPanel {
         }
         WIDTH = GUIPanel.WIDTH/5+(Board.OFFSET*2);
         background = backgroundIcon.getImage();
-        decreaseTime();
+        startTimer();
     }
-    private void decreaseTime() {
+    private void startTimer() {
+        /*
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -62,7 +65,36 @@ public class MidColumn extends JPanel {
                 }
             }
         }, 0, DECREASE_TIME_INTERVAL, TimeUnit.MILLISECONDS);
+                */
+        
+        timer = Executors.newSingleThreadScheduledExecutor();
+        timer.scheduleAtFixedRate(new TimerThread(), 0, DECREASE_TIME_INTERVAL, TimeUnit.MILLISECONDS);
     }
+    
+    public class TimerThread implements Runnable
+    {
+        @Override
+        public void run()
+        {
+            if(mSeconds < 10)
+                mSeconds ++;
+            else
+            {
+                mSeconds = 0;
+                if(seconds < 59){
+                    seconds++;
+                    repaint();
+                }
+                else
+                {
+                    seconds = 0;
+                    minutes ++;
+                    repaint();
+                }
+            }
+        }
+    }
+    
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         g.drawImage(background, 0, 0,WIDTH,HEIGHT, this);
@@ -75,5 +107,9 @@ public class MidColumn extends JPanel {
         g.drawString(time, (WIDTH/2)-55,HEIGHT-50);
         g.drawString("P1 Combo x" + mainPanel.b1.comboStreak,(WIDTH/2)-60,HEIGHT-150);
         g.drawString("P2 Combo x" + mainPanel.b2.comboStreak,(WIDTH/2)-60,HEIGHT-100);
+    }
+    public void stopTimer()
+    {
+        timer.shutdown();
     }
 }

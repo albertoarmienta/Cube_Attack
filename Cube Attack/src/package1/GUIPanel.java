@@ -1,20 +1,11 @@
 package package1;
 import java.applet.Applet;
-import java.applet.AudioClip;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -36,7 +27,7 @@ class GUIPanel extends Applet implements ActionListener{
     private JFrame game = buildFrame();
     public Clip currentSong;
     //ComboStreakDisplay.setLineWrap(true);
-    public GUIPanel() 
+    public GUIPanel()
     {
         menu = new JLabel();
         menu.setBounds(0,0,WIDTH,HEIGHT);
@@ -54,11 +45,11 @@ class GUIPanel extends Applet implements ActionListener{
     //Get the 'working' height and width of users monitor
     public static int getScreenWorkingWidth() {
         return java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
-}
-
+    }
+    
     public static int getScreenWorkingHeight() {
         return java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height;
-}
+    }
     public JFrame buildFrame() {
         JFrame window = new JFrame("Cube Attack");
         window.setLayout(null);
@@ -87,135 +78,134 @@ class GUIPanel extends Applet implements ActionListener{
         //SetupDisplay() sets the boards and banners accordingly
         SetupDisplay();
     }
-
     
-
-    /*
-     public void paintComponent(Graphics g) {
-        //Whatever is painted last appears on top of everything else
-        paintComponent(g);
-        g.drawImage(new ImageIcon(getClass().getResource("BANNER.png")).getImage(),
-                Board.WIDTH,GUIPanel.HEIGHT, GUIPanel.WIDTH - Board.WIDTH * 2, GUIPanel.HEIGHT, this);
-     }
-    */
+    
+    
     @Override
     public void actionPerformed(ActionEvent ae) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
- private class TAdapter extends KeyAdapter {
-
+    
+    private class TAdapter extends KeyAdapter {
+        
         public void keyReleased(KeyEvent e) {
             
         }
-
+        
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
             switch(key){
                 case KeyEvent.VK_1:
                     if(gameState == 1){
-                    //b1.moveUp();
-                    //b2.moveUp();
+                        //b1.moveUp();
+                        //b2.moveUp();
                         
                     }
                     else if(gameState==0)
                     {
                         startGame1();
                         audio.playSelectSound();
-                       audio.stopSong(currentSong);
-                       currentSong = audio.playGameSong1();
+                        audio.stopSong(currentSong);
+                        currentSong = audio.playGameSong1();
                     }
                     break;
                 case KeyEvent.VK_2:
                     if(gameState == 1){
-                    //b1.moveUp();
-                    //b2.moveUp();
+                        //b1.moveUp();
+                        //b2.moveUp();
                     }
                     else if(gameState==0)
                     {
                         startGame2();
                         audio.stopSong(currentSong);
-                       currentSong = audio.playGameSong1();
+                        currentSong = audio.playGameSong1();
                     }
                     break;
                 case KeyEvent.VK_SPACE:
                     if(gameState == 1){
-                    b1.swapTargets();
-                    audio.playSwapSound();
+                        b1.swapTargets();
+                        audio.playSwapSound();
                     }
                     else if (gameState == 2)
                         b1.swapTargets();
-                        audio.playSwapSound();
+                    audio.playSwapSound();
                     break;
                 case KeyEvent.VK_UP:
                     if(gameState == 1){
                         b1.levelCursor.moveUp();
                         audio.playMoveSound();
                     }
-                     else if (gameState == 2){
-                         b2.levelCursor.moveUp();
-                         audio.playMoveSound();
-                     }
+                    else if (gameState == 2){
+                        b2.levelCursor.moveUp();
+                        audio.playMoveSound();
+                    }
                     break;
                 case KeyEvent.VK_DOWN:
                     if(gameState == 1){
-                     b1.levelCursor.moveDown();
-                     audio.playMoveSound();
+                        b1.levelCursor.moveDown();
+                        audio.playMoveSound();
                     }
                     else if (gameState == 2){
-                         b2.levelCursor.moveDown();
-                         audio.playMoveSound();
+                        b2.levelCursor.moveDown();
+                        audio.playMoveSound();
                     }
                     break;
                 case KeyEvent.VK_LEFT:
                     if(gameState == 1){
-                     b1.levelCursor.moveLeft();
-                     audio.playMoveSound();
+                        b1.levelCursor.moveLeft();
+                        audio.playMoveSound();
                     }
                     else if (gameState == 2){
-                         b2.levelCursor.moveLeft();
-                         audio.playMoveSound();
+                        b2.levelCursor.moveLeft();
+                        audio.playMoveSound();
                     }
                     break;
                 case KeyEvent.VK_RIGHT:
                     if(gameState == 1){
-                     b1.levelCursor.moveRight();
-                     audio.playMoveSound();
+                        b1.levelCursor.moveRight();
+                        audio.playMoveSound();
                     }
                     else if (gameState == 2){
-                         b2.levelCursor.moveRight();
-                         audio.playMoveSound();
+                        b2.levelCursor.moveRight();
+                        audio.playMoveSound();
                     }
                     break;
                 case KeyEvent.VK_W:
                     if (gameState == 2){
-                         b1.levelCursor.moveUp();
-                         audio.playMoveSound();
+                        b1.levelCursor.moveUp();
+                        audio.playMoveSound();
                     }
                     break;
                 case KeyEvent.VK_S:
                     if (gameState == 2){
-                         b1.levelCursor.moveDown();
-                         audio.playMoveSound();
+                        b1.levelCursor.moveDown();
+                        audio.playMoveSound();
                     }
                     break;
                 case KeyEvent.VK_A:
                     if (gameState == 2){
-                         b1.levelCursor.moveLeft();
-                         audio.playMoveSound();
+                        b1.levelCursor.moveLeft();
+                        audio.playMoveSound();
                     }
                     break;
                 case KeyEvent.VK_D:
                     if (gameState == 2){
-                         b1.levelCursor.moveRight();
-                         audio.playMoveSound();
+                        b1.levelCursor.moveRight();
+                        audio.playMoveSound();
                     }
-                    break;      
-                 case KeyEvent.VK_ENTER:
+                    break;
+                case KeyEvent.VK_ENTER:
                     if (gameState == 2){
-                         b2.swapTargets();
+                        b2.swapTargets();
                         audio.playSwapSound();
+                    }
+                    //if you are going against the AI, enter will move
+                    //move blocks up
+                    if(gameState == 1)
+                    {
+                        b1.moveUp();
+                        b1.generateRow();
                     }
                     break;
                 case KeyEvent.VK_0:
@@ -226,11 +216,13 @@ class GUIPanel extends Applet implements ActionListener{
                         //gameState = 0;
                     }
                     break;
+                case KeyEvent.VK_9:
+                    audio.stopSong(currentSong);
             }
             
         }
     }
-
+    
     private void SetupDisplay()
     {
         b1.setBounds(0,0,b1.WIDTH-(b1.OFFSET),b1.HEIGHT);
@@ -249,7 +241,6 @@ class GUIPanel extends Applet implements ActionListener{
     // reference to itself. Always put blocks on opposite board
     public void addBricks(Board whichBoard, int comboSize)
     {
-        //System.out.println("yo");
         //b1 is left board
         if(whichBoard == b1)
         {
@@ -259,6 +250,20 @@ class GUIPanel extends Applet implements ActionListener{
         {
             b1.generateBricks(comboSize);
         }
-        
+    }
+
+    // This function is called within the board class, and it will pass a
+    // reference to itself. This tells the that the current board 
+    public void endRound(Board whichBoard)
+    {
+        b1.stopThreads();
+        b2.stopThreads();
+        ImageIcon menuIcon = new ImageIcon(getClass().getResource("MENU.png"));
+        Image scaledIcon = menuIcon.getImage().getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_SMOOTH);
+        menu.setIcon(new ImageIcon(scaledIcon));
+        game.getContentPane().add(menu);
+        gameState = 0;
+        //this stops the timer in the MidColumn 
+        b3.stopTimer();
     }
 }

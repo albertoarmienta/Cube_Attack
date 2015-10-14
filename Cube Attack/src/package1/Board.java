@@ -1,6 +1,7 @@
 package package1;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -8,7 +9,7 @@ import javax.swing.*;
 
 
 public class Board extends JPanel {
-
+    
     //public static final int WIDTH = 400, HEIGHT = 800;
     public static int WIDTH = (GUIPanel.WIDTH/2) - (MidColumn.WIDTH/2), HEIGHT = GUIPanel.HEIGHT;
     public static final int MAX_X = 8, MAX_Y = 18;
@@ -23,10 +24,9 @@ public class Board extends JPanel {
     private static int timeLeft = 10000;
     private static boolean gameOver = false;
     private static boolean gameStarted = false;
-    private ScheduledExecutorService  moveUpThread;
     private ImageIcon backgroundIcon;
     private Image background;
-
+    
     public GUIPanel guiPanel;
     public int highestBlock = MAX_Y - 1;
     int originalMoveUpTimer = 400;
@@ -37,10 +37,12 @@ public class Board extends JPanel {
     public int moveUpInterval = 0;
     public int moveUpOffSet = 0;
     public int comboStreak = 0;
-
+    
+    private boolean AreFalling = false;
     private EnemyAI AIHandler;
     private Board thisBoard;
-
+    ArrayList <ScheduledExecutorService> Threads = new ArrayList<>();
+    
     public Board(boolean AI, GUIPanel GUI, int side) {
         if(side==1){
             backgroundIcon = new ImageIcon(getClass().getResource("BG1.png"));
@@ -55,15 +57,35 @@ public class Board extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.black));
         moveUpInterval = (int)Math.ceil((float)originalMoveUpTimer / (float)BLOCK_SIZE);
         resetArray();
-        removeBlock();
-        moveBlock();
         generateRow();
-        decreaseTime();
+        //This function starts all the threads
+        startThreads();
         if(AI)
         {
             AIHandler = new EnemyAI(levelArray, this);
         }
     }
+    
+    public void startThreads() {
+        ScheduledExecutorService decreaseTime = Executors.newSingleThreadScheduledExecutor();
+        decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
+        
+        ScheduledExecutorService moveBlocks = Executors.newSingleThreadScheduledExecutor();
+        moveBlocks.scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
+        
+        ScheduledExecutorService removeBlocks = Executors.newSingleThreadScheduledExecutor();
+        removeBlocks.scheduleAtFixedRate(new RemoveBlocksThread(), 0, 50, TimeUnit.MILLISECONDS);
+        
+        Threads.add(decreaseTime);
+        Threads.add(moveBlocks);
+        Threads.add(removeBlocks);
+    }
+    public void stopThreads()
+    {
+        for(int i = 0; i < Threads.size(); i++)
+            Threads.get(i).shutdown();
+    }
+    
     public static void resizeBoard(){
         WIDTH = (GUIPanel.WIDTH/2) - (MidColumn.WIDTH/2);
         HEIGHT = GUIPanel.HEIGHT;
@@ -76,15 +98,15 @@ public class Board extends JPanel {
             }
         }
     }
-
+    
     public void setArray(int x, int y, Block a) {
         levelArray[x][y] = a;
     }
     
     public void generateRow() {
         /* This Checks for three in a row when you generate a new row.
-        * Looks weird, just checks the last two indicies and if the macth, if they
-        * do, it doesn't allow for a block with the same color to be created
+        * Looks weird, just checks the last two indicies and if they match,
+        * it doesn't allow for a block with the same color to be created
         */
         for (int x = 0; x < MAX_X; x++) {
             if (x >= 2 && (levelArray[x - 1][MAX_Y - 1].color
@@ -98,15 +120,15 @@ public class Board extends JPanel {
                 levelArray[x][MAX_Y - 1] = new Block();
             }
         }
-
-        for (int x = 0; x < MAX_X; x++) 
+        
+        for (int x = 0; x < MAX_X; x++)
             levelArray[x][MAX_Y - 2].justSpawned = false;
-
+        
         for (int x = 0; x < MAX_X; x++) {
             adjacencyCheck(x, MAX_Y - 2);
         }
     }
-
+    
     public void generateBricks(int comboSize)
     {
         for(int y = 0; y < comboSize; y++)
@@ -200,42 +222,24 @@ public class Board extends JPanel {
                 bricksToBlocks(y - 1);
             if(tempUp - 1 >= 0 && levelArray[x][tempUp - 1].color == "BRICK")
                 bricksToBlocks(tempUp - 1);
-
+            
         }
         return deleteOrigin;
     }
     
     public void moveUp()
     {
+        for(int x = 0; x < MAX_X; x++)
+        {
+            if(levelArray[x][0].color != "EMPTY")
+                guiPanel.endRound(this);
+        }
         for (int x = 0; x < MAX_X; x++) {
             for (int y = 1; y < MAX_Y; y++) {
                 levelArray[x][y - 1] = levelArray[x][y];
             }
         }
         levelCursor.moveUp();
-    }
-    private void removeBlock() {
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
-            
-            @Override
-            public void run() {
-                for (int x = 0; x < levelArray.length; x++) {
-                    for (int y = 0; y < levelArray[0].length; y++) {
-                        if (levelArray[x][y].needsRemoval && levelArray[x][y].delayTime <= 0)
-                        {
-                            Block temp = levelArray[x][y] ;
-                            levelArray[x][y] = new Block("EMPTY");
-                            temp = null;
-                        }
-                        else if (levelArray[x][y].needsRemoval)
-                        {
-                            levelArray[x][y].delayTime--;
-                        }
-                    }
-                }
-            }
-        }, 0, 50, TimeUnit.MILLISECONDS);
     }
     
     private void bricksToBlocks(int y)
@@ -251,21 +255,6 @@ public class Board extends JPanel {
         
         if(y - 1 >= 0 && levelArray[0][y - 1].color == "BRICK")
             bricksToBlocks(y - 1);
-    }
-    private void moveBlock() {
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    shiftDown();
-                }
-                catch(Throwable e)
-                {
-                    System.out.println(e);
-                }
-            }
-        }, 0, 150, TimeUnit.MILLISECONDS);
     }
     
     public void shiftDown() {
@@ -295,7 +284,6 @@ public class Board extends JPanel {
                         else
                             comboStreak++;
                         comboTimer = DEFAULT_COMBO_TIMER;
-                        
                     }
                 }
                 else if("BRICK".equals(levelArray[x][y].color) && "EMPTY".equals(levelArray[x][y + 1].color) && y < highestBlock - 1)
@@ -354,6 +342,41 @@ public class Board extends JPanel {
     }
     
     
+    private void addBricks()
+    {
+        guiPanel.addBricks(this, comboStreak);
+    }
+    
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        //Whatever is painted last appears on top of everything else
+        //Draws the background image at (0,0) of this board
+        g.drawImage(background, 0, 0, WIDTH, HEIGHT, this);
+        //Draws the blocks
+        highestBlock = MAX_Y - 1;
+        AreFalling = false;
+        for (int x = 0; x < levelArray.length; x++) {
+            for (int y = 0; y < levelArray[0].length; y++) {
+                if (levelArray[x][y] instanceof Block) {
+                    //g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, this);
+                    g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, BLOCK_SIZE, BLOCK_SIZE, this);
+                    //g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y, this);
+                    if(!AreFalling && levelArray[x][y].falling)
+                        AreFalling = true;
+                }
+                if((levelArray[x][y].color != "EMPTY" && levelArray[x][y].color != "BRICK")
+                        && y< highestBlock)
+                    highestBlock = y;
+                
+            }
+        }
+        if(AreFalling && comboTimer > 0)
+            comboTimer = 0;
+        g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE - moveUpOffSet,BLOCK_SIZE*2,BLOCK_SIZE, this);
+    }
+    //
+    // Classes for threads
+    //
     public class DecreaseTimeThread implements Runnable
     {
         
@@ -392,36 +415,41 @@ public class Board extends JPanel {
         }
         
     }
-    private void addBricks()
-    {
-        guiPanel.addBricks(this, comboStreak);
-    }
-    public void decreaseTime() {
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        //DecreaseTimeThread thread = new DecreaseTimeThread();
-        exec.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
-    }
     
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        //Whatever is painted last appears on top of everything else
-        //Draws the background image at (0,0) of this board
-        g.drawImage(background, 0, 0, WIDTH, HEIGHT, this);
-        //Draws the blocks
-        highestBlock = MAX_Y - 1;
-        for (int x = 0; x < levelArray.length; x++) {
-            for (int y = 0; y < levelArray[0].length; y++) {
-                if (levelArray[x][y] instanceof Block) {
-                    //g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, this);
-                    g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y - moveUpOffSet, BLOCK_SIZE, BLOCK_SIZE, this);
-                    //g.drawImage(levelArray[x][y].getImage(), BLOCK_SIZE * x, BLOCK_SIZE * y, this);
-                }
-                if((levelArray[x][y].color != "EMPTY" && levelArray[x][y].color != "BRICK")
-                        && y< highestBlock)
-                    highestBlock = y;
-                
+    public class MoveBlocksThread implements Runnable
+    {
+        @Override
+        public void run() {
+            try
+            {
+                shiftDown();
+            }
+            catch(Throwable e)
+            {
+                System.out.println(e);
             }
         }
-        g.drawImage(levelCursor.getImage(), levelCursor.getCursorx() * BLOCK_SIZE, levelCursor.getCursory() * BLOCK_SIZE - moveUpOffSet,BLOCK_SIZE*2,BLOCK_SIZE, this);
+    }
+    public class RemoveBlocksThread implements Runnable
+    {
+        
+        @Override
+        public void run() {
+            for (int x = 0; x < levelArray.length; x++) {
+                for (int y = 0; y < levelArray[0].length; y++) {
+                    if (levelArray[x][y].needsRemoval && levelArray[x][y].delayTime <= 0)
+                    {
+                        Block temp = levelArray[x][y] ;
+                        levelArray[x][y] = new Block("EMPTY");
+                        temp = null;
+                    }
+                    else if (levelArray[x][y].needsRemoval)
+                    {
+                        levelArray[x][y].delayTime--;
+                    }
+                }
+            }
+        }
     }
 }
+
