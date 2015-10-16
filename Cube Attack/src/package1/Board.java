@@ -239,6 +239,7 @@ public class Board extends JPanel {
                 levelArray[x][y - 1] = levelArray[x][y];
             }
         }
+        //highestBlock --;
         levelCursor.moveUp();
     }
     
@@ -255,6 +256,38 @@ public class Board extends JPanel {
         
         if(y - 1 >= 0 && levelArray[0][y - 1].color == "BRICK")
             bricksToBlocks(y - 1);
+    }
+
+    // This Function just shifts the bricks due to issues that arise if the bricks
+    // falling were the function that moves all the colored blocks. Also this 
+    // makes them fall faster because this function is called in another thread.
+    // that is called every 10 ms vs 150ms
+    public void shiftBricksDown()
+    {
+        highestBlock = MAX_Y - 1 ;
+        for(int x = 0; x < MAX_X; x++)
+        {
+            for(int y = 0; y < MAX_Y; y++)
+            {
+                if((levelArray[x][y].color != "EMPTY" && levelArray[x][y].color != "BRICK")
+                        && y < highestBlock)
+                {
+                    highestBlock = y;
+                }
+            }
+        }
+        for(int x = MAX_X - 1; x >= 0; x--)
+        {
+            for (int y = MAX_Y - 2; y >= 0; y--) {
+                if(y + 1< highestBlock  && "BRICK".equals(levelArray[x][y].color) && "EMPTY".equals(levelArray[x][y + 1].color))
+                {
+                    Block temp = levelArray[x][y + 1];
+                    levelArray[x][y + 1] = levelArray[x][y];
+                    levelArray[x][y] = temp;
+                }
+            }
+        }
+
     }
     
     public void shiftDown() {
@@ -285,12 +318,6 @@ public class Board extends JPanel {
                             comboStreak++;
                         comboTimer = DEFAULT_COMBO_TIMER;
                     }
-                }
-                else if("BRICK".equals(levelArray[x][y].color) && "EMPTY".equals(levelArray[x][y + 1].color) && y < highestBlock - 1)
-                {
-                    Block temp = levelArray[x][y + 1];
-                    levelArray[x][y + 1] = levelArray[x][y];
-                    levelArray[x][y] = temp;
                 }
             }
         }
@@ -364,9 +391,11 @@ public class Board extends JPanel {
                     if(!AreFalling && levelArray[x][y].falling)
                         AreFalling = true;
                 }
+                /*
                 if((levelArray[x][y].color != "EMPTY" && levelArray[x][y].color != "BRICK")
                         && y< highestBlock)
                     highestBlock = y;
+                        */
                 
             }
         }
@@ -406,6 +435,7 @@ public class Board extends JPanel {
                     }
                     comboStreak = 0;
                 }
+                shiftBricksDown();
             }
             catch (Throwable e)
             {

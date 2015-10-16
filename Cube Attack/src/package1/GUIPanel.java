@@ -216,6 +216,14 @@ class GUIPanel extends Applet implements ActionListener{
                         //gameState = 0;
                     }
                     break;
+                case KeyEvent.VK_EQUALS:
+                    if(gameState==1)
+                    {
+                        b2.generateBricks(1);
+                        //game.dispose();
+                        //gameState = 0;
+                    }
+                    break;
                 case KeyEvent.VK_9:
                     audio.stopSong(currentSong);
             }
@@ -254,6 +262,7 @@ class GUIPanel extends Applet implements ActionListener{
 
     // This function is called within the board class, and it will pass a
     // reference to itself. This tells the that the current board 
+    // For now when you lose you are brought to the main menu
     public void endRound(Board whichBoard)
     {
         b1.stopThreads();
@@ -261,8 +270,12 @@ class GUIPanel extends Applet implements ActionListener{
         ImageIcon menuIcon = new ImageIcon(getClass().getResource("MENU.png"));
         Image scaledIcon = menuIcon.getImage().getScaledInstance(WIDTH, HEIGHT, java.awt.Image.SCALE_SMOOTH);
         menu.setIcon(new ImageIcon(scaledIcon));
+        game.remove(b1);
+        game.remove(b2);
+        game.remove(b3);
         game.getContentPane().add(menu);
         gameState = 0;
+        game.repaint();
         //this stops the timer in the MidColumn 
         b3.stopTimer();
     }
