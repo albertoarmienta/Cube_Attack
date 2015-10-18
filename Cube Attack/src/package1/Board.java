@@ -3,8 +3,11 @@ package package1;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 
@@ -76,6 +79,9 @@ public class Board extends JPanel {
         ScheduledExecutorService removeBlocks = Executors.newSingleThreadScheduledExecutor();
         removeBlocks.scheduleAtFixedRate(new RemoveBlocksThread(), 0, 50, TimeUnit.MILLISECONDS);
         
+        /*
+         * DONT CHANGE THIS ORDERRRRRR!!!!!
+         */
         Threads.add(decreaseTime);
         Threads.add(moveBlocks);
         Threads.add(removeBlocks);
@@ -84,6 +90,30 @@ public class Board extends JPanel {
     {
         for(int i = 0; i < Threads.size(); i++)
             Threads.get(i).shutdown();
+    }
+
+    public void pauseThreadsForBricksToBlocks()
+    {
+        //Future<?> future1 = Threads.get(0).scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
+        //Future<?> future2 = Threads.get(1).scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
+        Threads.get(0).shutdown();
+        Threads.get(1).shutdown();
+    }
+
+    public void restartThreadsForBricksToBlocks()
+    {
+        //Threads.get(0)
+        ScheduledExecutorService decreaseTime = Executors.newSingleThreadScheduledExecutor();
+        decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
+
+        ScheduledExecutorService moveBlocks = Executors.newSingleThreadScheduledExecutor();
+        moveBlocks.scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
+        if(Threads.get(0).isTerminated())
+            Threads.set(0, decreaseTime);
+        if(Threads.get(1).isTerminated())
+            Threads.set(1, moveBlocks);
+        //Threads.get(0).notify();
+        //Threads.get(1).notify();
     }
     
     public static void resizeBoard(){
@@ -219,9 +249,11 @@ public class Board extends JPanel {
             levelArray[x][y].nextSprite();
             //checking if block above origin is a brick
             if(y - 1 >= 0 && levelArray[x][y - 1].color == "BRICK")
-                bricksToBlocks(y - 1);
-            if(tempUp - 1 >= 0 && levelArray[x][tempUp - 1].color == "BRICK")
-                bricksToBlocks(tempUp - 1);
+                (new BricksToBlocksThread(y - 1)).start();
+                //bricksToBlocks(y - 1);
+            else if(tempUp - 1 >= 0 && levelArray[x][tempUp - 1].color == "BRICK")
+                (new BricksToBlocksThread(tempUp - 1)).start();
+                //bricksToBlocks(tempUp - 1);
             
         }
         return deleteOrigin;
@@ -247,12 +279,53 @@ public class Board extends JPanel {
     {
         if(y < 0 || y > MAX_Y)
             return;
+        Block [] buffer = new Block[MAX_X];
+        /*
+        for (int x = 0; x < MAX_X; x++) {
+            if (x >= 2 && (levelArray[x - 1][MAX_Y - 1].color
+                    == levelArray[x - 2][MAX_Y - 1].color)) {
+                while ((levelArray[x][MAX_Y - 1] = new Block()).color
+                        == levelArray[x - 1][MAX_Y - 1].color) {
+                    levelArray[x][MAX_Y - 1] = null;
+                    levelArray[x][MAX_Y - 1] = new Block();
+                }
+            } else {
+                levelArray[x][MAX_Y - 1] = new Block();
+            }
+        }
+        */
+        for (int x = 0; x < MAX_X; x++) {
+            if (x >= 2 && (buffer[x - 1].color
+                    == buffer[x - 2].color)) {
+                while ((buffer[x] = new Block()).color
+                        == buffer[x - 1].color) {
+                    buffer[x] = null;
+                    buffer[x] = new Block();
+                }
+            } else {
+                buffer[x] = new Block();
+            }
+        }
+        for(int x = 0; x < MAX_X; x++)
+        {
+            levelArray[x][y] = buffer[x];
+            levelArray[x][y].justSpawned = false;
+            try {
+                Thread.sleep(100);
+                repaint();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            adjacencyCheck(x, y);
+        }
+        /*
         for(int x = 0; x < MAX_X; x++)
         {
             levelArray[x][y] = new Block();
             levelArray[x][y].justSpawned = false;
             adjacencyCheck(x, y);
         }
+        */
         
         if(y - 1 >= 0 && levelArray[0][y - 1].color == "BRICK")
             bricksToBlocks(y - 1);
@@ -479,6 +552,32 @@ public class Board extends JPanel {
                     }
                 }
             }
+        }
+    }
+
+    public class BricksToBlocksThread extends Thread 
+    {
+        private int y;
+        public BricksToBlocksThread(int y)
+        {
+            this.y = y;
+        }
+        //@Override
+        public void run()
+        {
+            /*
+            Future<?> future1 = Threads.get(0).scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
+            Future<?> future2 = Threads.get(1).scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
+            future1.cancel(true);
+            future2.cancel(true);
+                    */
+            pauseThreadsForBricksToBlocks();
+            bricksToBlocks(y);
+            /*
+            future1 = Threads.get(0).scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
+            future2 = Threads.get(1).scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS); 
+                    */
+            restartThreadsForBricksToBlocks();
         }
     }
 }
