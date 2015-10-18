@@ -1,8 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
+*/
 package package1;
 
 import java.util.Collections;
@@ -15,22 +15,28 @@ import java.util.concurrent.TimeUnit;
  *
  * @author beartoes
  */
-public class EnemyAI 
+public class EnemyAI
 {
-    private Block[][] levelArray; 
+    private Block[][] levelArray;
     private Board board;
-
+    Vertex [] prevMoves = new Vertex[4];
+    
     //used for which cursor square to the block
     enum cursorPos{LEFT, RIGHT, UNKNOWN}
-
+    
     EnemyAI(Block[][] array, Board b)
     {
         levelArray = array;
         board = b;
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        for(int i = 0; i < 4; i++)
+        {
+            prevMoves[i] = new Vertex(1000,1000);
+            prevMoves[i].weight = 1000;
+        }
         exec.scheduleAtFixedRate(new AIThread(), 0, 200, TimeUnit.MILLISECONDS);
     }
-
+    
     public class AIThread implements Runnable
     {
         @Override
@@ -45,9 +51,9 @@ public class EnemyAI
                 System.out.println("AI thread:" + e);
             }
         }
-
+        
     }
-
+    
     public class Vertex
     {
         public int x;
@@ -65,7 +71,7 @@ public class EnemyAI
             whichCursor = 'U';
             switchBlocks = false;
             weight = calculateYWeight(board.levelCursor.getCursory(), this.y);
-                    
+            
             //weight = 0;
         }
         //resets swtich blocks and cursor cause only valid for one move
@@ -76,89 +82,140 @@ public class EnemyAI
             weight = 0;
         }
     }
-
+    
     private void searchForMatch()
     {
-       int leastWeight = 1000000;
-       Vertex temp;
-       Vertex bestMatch = null;
-       int start_x = board.levelCursor.getCursorx() - 1; 
-       int start_y = board.levelCursor.getCursory() - 2;
-       if(start_x < 0)
-           start_x = 0;
-       if(start_y < 0)
-           start_y = 0;
+        int leastWeight = 1000000;
+        Vertex temp;
+        Vertex bestMatch = null;
+        int start_x = board.levelCursor.getCursorx() - 1;
+        int start_y = board.levelCursor.getCursory() - 2;
+        if(start_x < 0)
+            start_x = 0;
+        if(start_y < 0)
+            start_y = 0;
+        
+        Vector<Vertex> blue  = new Vector<>();
+        Vector<Vertex> red   = new Vector<>();
+        Vector<Vertex> green = new Vector<>();
+        Vector<Vertex> black = new Vector<>();
+        Vector<Vertex> white = new Vector<>();
+        
+        for(int i = 0; i < board.MAX_X /*&& i < (start_x + 3)*/; i++)
+        {
+            for(int j = 0; j < board.MAX_Y - 1 /*&& j < (start_y + 3)*/; j++)
+            {
+                switch(levelArray[i][j].color)
+                {
+                    case "RED":
+                        red.add(new Vertex(i,j));
+                        break;
+                    case "BLUE":
+                        blue.add(new Vertex(i,j));
+                        break;
+                    case "GREEN":
+                        green.add(new Vertex(i,j));
+                        break;
+                    case "WHITE":
+                        white.add(new Vertex(i,j));
+                        break;
+                    case "BLACK":
+                        black.add(new Vertex(i,j));
+                        break;
+                }
+            }
+        }
+        Vector<Vector<Vertex>> results = new Vector<>();
+        results.add(green);
+        results.add(black);
+        results.add(white);
+        results.add(blue);
+        results.add(red);
+        String whichMatchTaken = "NONE";
+        Vertex [] moves = new Vertex[4];
+        for(int i = 0; i < 4; i++)
+        {
+            moves[i] = new Vertex(1000,1000);
+            moves[i].weight = 1000;
+        }
+        for(int i = 0; i < results.size(); i++)
+        {
+            //for(int j = 0; j < results.get(i).size(); j++)
+            //{
+                if((temp = match3Horizontal(results.get(i))) != null)
+                {
+                    for(int k = 0; k < 4; k++)
+                    {
+                        //if(Math.abs(temp.weight) < leastWeight)
+                        if(Math.abs(temp.weight) < Math.abs(moves[k].weight))
+                        {
+                            //leastWeight = Math.abs(temp.weight);
+                            moves[k] = temp;
+                            //System.out.println(temp.x + ", " + temp.y + " : " + temp.weight);
+                            bestMatch = temp;
+                            whichMatchTaken = "Horizontal";
+                            break;
+                        }
+                    }
+                }
+                if((temp = matchVertical(results.get(i))) != null)
+                {
+                    for(int k = 0; k < 4; k++)
+                    {
+                        if(Math.abs(temp.weight) < Math.abs(moves[k].weight))
+                        {
+                            //leastWeight = Math.abs(temp.weight);
+                            moves[k] = temp;
+                            //System.out.println(temp.x + ", " + temp.y + " : " + temp.weight);
+                            bestMatch = temp;
+                            whichMatchTaken = "Vertical";
+                            break;
+                        }
+                    }
+                }
+                
+            //}
+        }
+        /*
+        System.out.println("--------MOVES--------");
+        for(int i= 0; i < 4; i++)
+            System.out.println(moves[i].x + ", "+ moves[i].y);
+        System.out.println("-------MOVES---------");
+        */
+        
+        if(moves[0].weight != 1000)
+        {
+            if(prevMoves[0].x == prevMoves[3].x && prevMoves[0].y == prevMoves[3].y )
+            {
 
-       Vector<Vertex> blue  = new Vector<>();
-       Vector<Vertex> red   = new Vector<>();
-       Vector<Vertex> green = new Vector<>();
-       Vector<Vertex> black = new Vector<>();
-       Vector<Vertex> white = new Vector<>();
+                //System.out.println("moves[0]: " + moves[0].x + ", " + moves[0].y + "moves[3]: " + + moves[3].x + ", " + moves[3].y );
+                for(int i = 1; i < 4; i++)
+                {
+                    if(moves[i].weight != 1000)
+                    {
+                        moves[0] = moves[i];
+                        break;
+                    }
+                }
+                
+            }
+            //System.out.println("---------------PREVMOVES-------------------");
+            for(int i = 3; i > 0 ; i--)
+            {
+                prevMoves[i] = prevMoves[i-1];
+             //   System.out.println(prevMoves[i].x + ", "+ prevMoves[i].y);
+            }
+            //System.out.println("---------------PREVMOVES-------------------");
 
-       for(int i = 0; i < board.MAX_X /*&& i < (start_x + 3)*/; i++)
-       {
-           for(int j = 0; j < board.MAX_Y - 1 /*&& j < (start_y + 3)*/; j++)
-           {
-               switch(levelArray[i][j].color)
-               {
-                   case "RED":
-                       red.add(new Vertex(i,j));
-                       break;
-                   case "BLUE":
-                       blue.add(new Vertex(i,j));
-                       break;
-                   case "GREEN":
-                       green.add(new Vertex(i,j));
-                       break;
-                   case "WHITE":
-                       white.add(new Vertex(i,j));
-                       break;
-                   case "BLACK":
-                       black.add(new Vertex(i,j));
-                       break;
-               }
-           }
-       }
-       Vector<Vector<Vertex>> results = new Vector<>();
-       results.add(green);
-       results.add(black);
-       results.add(white);
-       results.add(blue);
-       results.add(red);
-       String whichMatchTaken = "NONE";
-       for(int i = 0; i < results.size(); i++)
-       {
-           for(int j = 0; j < results.get(i).size(); j++)
-           {
-               if((temp = match3Horizontal(results.get(i))) != null)
-               {
-                   if(Math.abs(temp.weight) < leastWeight)
-                   {
-                       leastWeight = Math.abs(temp.weight);
-                       //System.out.println(temp.x + ", " + temp.y + " : " + temp.weight);
-                       bestMatch = temp;
-                       whichMatchTaken = "Horizontal";
-                   }
-               }
-               if((temp = matchVertical(results.get(i))) != null)
-               {
-                   if(Math.abs(temp.weight) < leastWeight)
-                   {
-                       leastWeight = Math.abs(temp.weight);
-                       //System.out.println(temp.x + ", " + temp.y + " : " + temp.weight);
-                       bestMatch = temp;
-                       whichMatchTaken = "Vertical";
-                   }
-               }
-
-           }
-       }
-       
-       //System.out.println("MATCH TAKEN: " + whichMatchTaken);
-       if(bestMatch != null)
-       {
-           moveCursorTo(bestMatch);
-       }
+            prevMoves[0] = new Vertex(board.levelCursor.getCursorx(), board.levelCursor.getCursory());
+            moveCursorTo(moves[0]);
+        }
+    }
+    private void setMove(Vertex a, Vertex b)
+    {
+        a.x = b.x;
+        a.y = b.y;
+        a.weight = b.weight;
     }
     
     public Vertex match3Horizontal(Vector<Vertex> array)
@@ -256,7 +313,7 @@ public class EnemyAI
             //System.out.println(matches.get(numMatches).y + ", " + array.get(i).y);
             //if(array.get(i).y == matches.get(numMatches).y)
             //{
-               //continue;
+            //continue;
             //}
             if((matches.get(numMatches).y + 1) == (array.get(i).y ))
             {
@@ -266,8 +323,8 @@ public class EnemyAI
                 /*
                 if(i == array.size() - 1 && numMatches > 2)
                 {
-                    results.add(matches);
-                    numResults ++;
+                results.add(matches);
+                numResults ++;
                 }
                 */
                 if(array.get(i).weight < weight)
@@ -299,7 +356,7 @@ public class EnemyAI
                         matches.add(array.get(i));
                         numMatches = 0;
                     }
-                   
+                    
                 }
                 //System.out.println(matches.size());//bestMatch.size());
             }
