@@ -96,22 +96,28 @@ public class Board extends JPanel {
     {
         //Future<?> future1 = Threads.get(0).scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
         //Future<?> future2 = Threads.get(1).scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
-        Threads.get(0).shutdown();
-        Threads.get(1).shutdown();
+        while(!Threads.get(0).isTerminated())
+            Threads.get(0).shutdown();
+        while(!Threads.get(1).isTerminated())
+            Threads.get(1).shutdown();
     }
 
     public void restartThreadsForBricksToBlocks()
     {
         //Threads.get(0)
-        ScheduledExecutorService decreaseTime = Executors.newSingleThreadScheduledExecutor();
-        decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
 
-        ScheduledExecutorService moveBlocks = Executors.newSingleThreadScheduledExecutor();
-        moveBlocks.scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
         if(Threads.get(0).isTerminated())
+        {
+            ScheduledExecutorService decreaseTime = Executors.newSingleThreadScheduledExecutor();
+            decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
             Threads.set(0, decreaseTime);
+        }
         if(Threads.get(1).isTerminated())
+        {
+            ScheduledExecutorService moveBlocks = Executors.newSingleThreadScheduledExecutor();
+            moveBlocks.scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
             Threads.set(1, moveBlocks);
+        }
         //Threads.get(0).notify();
         //Threads.get(1).notify();
     }
