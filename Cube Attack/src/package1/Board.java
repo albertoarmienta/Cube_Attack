@@ -44,7 +44,11 @@ public class Board extends JPanel {
     private boolean AreFalling = false;
     private EnemyAI AIHandler;
     private Board thisBoard;
+    //variables used when bricks are going to blocks
+    private boolean shiftingBricksToBlocks = false;
+    private int brickStartY = 0;
     ArrayList <ScheduledExecutorService> Threads = new ArrayList<>();
+    ArrayList<Future<?>> futureThreads = new ArrayList<>();
     
     public Board(boolean AI, GUIPanel GUI, int side) {
         if(side==1){
@@ -70,8 +74,9 @@ public class Board extends JPanel {
     }
     
     public void startThreads() {
+        //ScheduledExecutorService decreaseTime = Executors.newSingleThreadScheduledExecutor();
         ScheduledExecutorService decreaseTime = Executors.newSingleThreadScheduledExecutor();
-        decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
+        futureThreads.add(decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS));
         
         ScheduledExecutorService moveBlocks = Executors.newSingleThreadScheduledExecutor();
         moveBlocks.scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
@@ -96,10 +101,17 @@ public class Board extends JPanel {
     {
         //Future<?> future1 = Threads.get(0).scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
         //Future<?> future2 = Threads.get(1).scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
-        while(!Threads.get(0).isTerminated())
-            Threads.get(0).shutdown();
-        while(!Threads.get(1).isTerminated())
-            Threads.get(1).shutdown();
+        //while(!Threads.get(0).isTerminated())
+            //Threads.get(0).shutdown();
+        Threads.get(0).shutdownNow();
+        try {
+            while(!Threads.get(0).awaitTermination(50, TimeUnit.MILLISECONDS))
+                Threads.get(0).shutdownNow();
+            //while(!Threads.get(1).isTerminated())
+            //Threads.get(1).shutdown();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void restartThreadsForBricksToBlocks()
@@ -112,12 +124,14 @@ public class Board extends JPanel {
             decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
             Threads.set(0, decreaseTime);
         }
+        /*
         if(Threads.get(1).isTerminated())
         {
             ScheduledExecutorService moveBlocks = Executors.newSingleThreadScheduledExecutor();
             moveBlocks.scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
             Threads.set(1, moveBlocks);
         }
+        */
         //Threads.get(0).notify();
         //Threads.get(1).notify();
     }
@@ -265,6 +279,26 @@ public class Board extends JPanel {
         return deleteOrigin;
     }
     
+    private void tempFunc(int y)
+    {
+            /*
+            Future<?> future1 = Threads.get(0).scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
+            Future<?> future2 = Threads.get(1).scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
+            future1.cancel(true);
+            future2.cancel(true);
+                    */
+            shiftingBricksToBlocks = true;
+            brickStartY = y;
+            pauseThreadsForBricksToBlocks();
+            bricksToBlocks(y);
+            /*
+            future1 = Threads.get(0).scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
+            future2 = Threads.get(1).scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS); 
+                    */
+            restartThreadsForBricksToBlocks();
+            shiftingBricksToBlocks = false;
+            brickStartY = 0;
+    }
     public void moveUp()
     {
         for(int x = 0; x < MAX_X; x++)
@@ -350,10 +384,13 @@ public class Board extends JPanel {
     
     public void shiftDown() {
         boolean moveUp = true;
+        int curHighestY = 0;
+        if(shiftingBricksToBlocks == true)
+            curHighestY = brickStartY + 1;
         for (int x = MAX_X - 1; x >= 0; x--) {
             if(!"EMPTY".equals(levelArray[x][MAX_Y-1].color) && !"BRICK".equals(levelArray[x][MAX_Y-1].color))
                 adjacencyCheck(x,MAX_Y-1);
-            for (int y = MAX_Y - 2; y >= 0; y--) {
+            for (int y = MAX_Y - 2; y >= curHighestY; y--) {
                 //If the current block is not EMPTY and the block below it IS EMPTY
                 if (!"EMPTY".equals(levelArray[x][y].color) && !"BRICK".equals(levelArray[x][y].color)
                         && "EMPTY".equals(levelArray[x][y + 1].color)) {
@@ -556,6 +593,8 @@ public class Board extends JPanel {
             future1.cancel(true);
             future2.cancel(true);
                     */
+            shiftingBricksToBlocks = true;
+            brickStartY = y;
             pauseThreadsForBricksToBlocks();
             bricksToBlocks(y);
             /*
@@ -563,6 +602,8 @@ public class Board extends JPanel {
             future2 = Threads.get(1).scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS); 
                     */
             restartThreadsForBricksToBlocks();
+            shiftingBricksToBlocks = false;
+            brickStartY = 0;
         }
     }
 }
