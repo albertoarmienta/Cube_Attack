@@ -286,20 +286,7 @@ public class Board extends JPanel {
         if(y < 0 || y > MAX_Y)
             return;
         Block [] buffer = new Block[MAX_X];
-        /*
-        for (int x = 0; x < MAX_X; x++) {
-            if (x >= 2 && (levelArray[x - 1][MAX_Y - 1].color
-                    == levelArray[x - 2][MAX_Y - 1].color)) {
-                while ((levelArray[x][MAX_Y - 1] = new Block()).color
-                        == levelArray[x - 1][MAX_Y - 1].color) {
-                    levelArray[x][MAX_Y - 1] = null;
-                    levelArray[x][MAX_Y - 1] = new Block();
-                }
-            } else {
-                levelArray[x][MAX_Y - 1] = new Block();
-            }
-        }
-        */
+
         for (int x = 0; x < MAX_X; x++) {
             if (x >= 2 && (buffer[x - 1].color
                     == buffer[x - 2].color)) {
@@ -324,14 +311,6 @@ public class Board extends JPanel {
             }
             adjacencyCheck(x, y);
         }
-        /*
-        for(int x = 0; x < MAX_X; x++)
-        {
-            levelArray[x][y] = new Block();
-            levelArray[x][y].justSpawned = false;
-            adjacencyCheck(x, y);
-        }
-        */
         
         if(y - 1 >= 0 && levelArray[0][y - 1].color == "BRICK")
             bricksToBlocks(y - 1);
