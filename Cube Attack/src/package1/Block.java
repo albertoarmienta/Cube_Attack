@@ -11,7 +11,6 @@ public class Block extends Rectangle {
     public String color;
     public int movesNeeded = 0;
     public int delayTime = 10;
-    public boolean justSpawned = true;
     public boolean needsRemoval = false;
     public boolean falling = false;
 
@@ -46,7 +45,6 @@ public class Block extends Rectangle {
                 imageIcon = new ImageIcon(getClass().getResource("EXCLAM.png"));
                 break;
         }
-        justSpawned = true;
         image = imageIcon.getImage();
 
     }
@@ -72,7 +70,6 @@ public class Block extends Rectangle {
             imageIcon = new ImageIcon(getClass().getResource("EXCLAM.png"));
             this.color = "EXCLAM";
         }
-        justSpawned = true;
         image = imageIcon.getImage();
     }
 

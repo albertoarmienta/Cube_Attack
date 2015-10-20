@@ -15,7 +15,7 @@ public class Board extends JPanel {
     
     //public static final int WIDTH = 400, HEIGHT = 800;
     public static int WIDTH = (GUIPanel.WIDTH/2) - (MidColumn.WIDTH/2), HEIGHT = GUIPanel.HEIGHT;
-    public static final int MAX_X = 8, MAX_Y = 18;
+    public static final int MAX_X = 8, MAX_Y = 17;
     public static int BLOCK_SIZE = WIDTH/MAX_X;
     public static int OFFSET = WIDTH%BLOCK_SIZE;
     public Block[][] levelArray = new Block[MAX_X][MAX_Y];
@@ -48,7 +48,8 @@ public class Board extends JPanel {
     private boolean shiftingBricksToBlocks = false;
     private int brickStartY = 0;
     ArrayList <ScheduledExecutorService> Threads = new ArrayList<>();
-    ArrayList<Future<?>> futureThreads = new ArrayList<>();
+    private Block paddingBlock = new Block("BRICK");
+    //ArrayList<Future<?>> futureThreads = new ArrayList<>();
     
     public Board(boolean AI, GUIPanel GUI, int side) {
         if(side==1){
@@ -76,7 +77,8 @@ public class Board extends JPanel {
     public void startThreads() {
         //ScheduledExecutorService decreaseTime = Executors.newSingleThreadScheduledExecutor();
         ScheduledExecutorService decreaseTime = Executors.newSingleThreadScheduledExecutor();
-        futureThreads.add(decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS));
+        //futureThreads.add(decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS));
+        decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
         
         ScheduledExecutorService moveBlocks = Executors.newSingleThreadScheduledExecutor();
         moveBlocks.scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
@@ -171,8 +173,6 @@ public class Board extends JPanel {
             }
         }
         
-        for (int x = 0; x < MAX_X; x++)
-            levelArray[x][MAX_Y - 2].justSpawned = false;
         
         for (int x = 0; x < MAX_X; x++) {
             adjacencyCheck(x, MAX_Y - 2);
@@ -211,7 +211,7 @@ public class Board extends JPanel {
         int tempUp = 0;
         Boolean deleteOrigin = false;
         while (x > 0) {
-            if (levelArray[x][y].color.equals(levelArray[x - 1][y].color) && levelArray[x][y].color != "EMPTY" ) {//&& !levelArray[x][y].justSpawned) {
+            if (levelArray[x][y].color.equals(levelArray[x - 1][y].color) && levelArray[x][y].color != "EMPTY" ) {
                 numSameL++;
                 x--;
             } else {
@@ -229,7 +229,7 @@ public class Board extends JPanel {
         }
         x = xref;
         while (y > 0) {
-            if (levelArray[x][y].color == levelArray[x][y - 1].color && levelArray[x][y].color != "EMPTY" && !levelArray[x][y].justSpawned) {
+            if (levelArray[x][y].color == levelArray[x][y - 1].color && levelArray[x][y].color != "EMPTY" ){
                 numSameU++;
                 y--;
             } else {
@@ -238,7 +238,7 @@ public class Board extends JPanel {
         }
         y = yref;
         while (y < MAX_Y - 1) {
-            if (levelArray[x][y].color == levelArray[x][y + 1].color && levelArray[x][y].color != "EMPTY"&& !levelArray[x][y + 1].justSpawned) {
+            if (levelArray[x][y].color == levelArray[x][y + 1].color && levelArray[x][y].color != "EMPTY"){
                 numSameD++;
                 y++;
             } else {
@@ -329,7 +329,6 @@ public class Board extends JPanel {
         for(int x = 0; x < MAX_X; x++)
         {
             levelArray[x][y] = buffer[x];
-            levelArray[x][y].justSpawned = false;
             try {
                 Thread.sleep(100);
                 repaint();
@@ -480,6 +479,11 @@ public class Board extends JPanel {
                         AreFalling = true;
                 }
             }
+        }
+        //displaying padding
+        for(int x = 0; x < MAX_X; x++)
+        {
+            g.drawImage(paddingBlock.getImage(), BLOCK_SIZE * x, BLOCK_SIZE * MAX_Y - moveUpOffSet, BLOCK_SIZE, BLOCK_SIZE, this);
         }
         if(AreFalling && comboTimer > 0)
             comboTimer = 0;
