@@ -101,16 +101,10 @@ public class Board extends JPanel {
 
     public void pauseThreadsForBricksToBlocks()
     {
-        //Future<?> future1 = Threads.get(0).scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
-        //Future<?> future2 = Threads.get(1).scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
-        //while(!Threads.get(0).isTerminated())
-            //Threads.get(0).shutdown();
         Threads.get(0).shutdownNow();
         try {
             while(!Threads.get(0).awaitTermination(50, TimeUnit.MILLISECONDS))
                 Threads.get(0).shutdownNow();
-            //while(!Threads.get(1).isTerminated())
-            //Threads.get(1).shutdown();
         } catch (InterruptedException ex) {
             Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -118,7 +112,6 @@ public class Board extends JPanel {
 
     public void restartThreadsForBricksToBlocks()
     {
-        //Threads.get(0)
 
         if(Threads.get(0).isTerminated())
         {
@@ -126,16 +119,6 @@ public class Board extends JPanel {
             decreaseTime.scheduleAtFixedRate(new DecreaseTimeThread(), 0, 10, TimeUnit.MILLISECONDS);
             Threads.set(0, decreaseTime);
         }
-        /*
-        if(Threads.get(1).isTerminated())
-        {
-            ScheduledExecutorService moveBlocks = Executors.newSingleThreadScheduledExecutor();
-            moveBlocks.scheduleAtFixedRate(new MoveBlocksThread(), 0, 150, TimeUnit.MILLISECONDS);
-            Threads.set(1, moveBlocks);
-        }
-        */
-        //Threads.get(0).notify();
-        //Threads.get(1).notify();
     }
     
     public static void resizeBoard(){
@@ -275,15 +258,17 @@ public class Board extends JPanel {
             //moveUpTimer = originalMoveUpTimer;
             levelArray[x][y].nextSprite();
             //checking if block above origin is a brick
-            if(y - 1 >= 0 && levelArray[x][y - 1].color == "BRICK")
+            if(!shiftingBricksToBlocks && y - 1 >= 0 && levelArray[x][y - 1].color == "BRICK")
             {
                 System.out.println("origin");
+                shiftingBricksToBlocks = true;
                 (new BricksToBlocksThread(y - 1)).start();
             }
                 //bricksToBlocks(y - 1);
-            else if(tempUp - 1 >= 0 && levelArray[x][tempUp - 1].color == "BRICK")
+            else if(!shiftingBricksToBlocks && tempUp - 1 >= 0 && levelArray[x][tempUp - 1].color == "BRICK")
             {
                 System.out.println("tempUp");
+                shiftingBricksToBlocks = true;
                 (new BricksToBlocksThread(tempUp - 1)).start();
                 //bricksToBlocks(tempUp - 1);
             }
@@ -325,6 +310,7 @@ public class Board extends JPanel {
             } else {
                 buffer[x] = new Block();
             }
+            buffer[x].falling = true;
         }
         for(int x = 0; x < MAX_X; x++)
         {
@@ -380,7 +366,9 @@ public class Board extends JPanel {
         if(shiftingBricksToBlocks == true)
             curHighestY = brickStartY + 1;
         for (int x = MAX_X - 1; x >= 0; x--) {
-            if(!"EMPTY".equals(levelArray[x][MAX_Y-1].color) && !"BRICK".equals(levelArray[x][MAX_Y-1].color))
+            //need to make sure that !shiftingBlocks because if it is, the
+            //adjacency check will spawn to many threads.
+            if(!shiftingBricksToBlocks && !"EMPTY".equals(levelArray[x][MAX_Y-1].color) && !"BRICK".equals(levelArray[x][MAX_Y-1].color))
                 adjacencyCheck(x,MAX_Y-1);
             for (int y = MAX_Y - 2; y >= curHighestY; y--) {
                 //If the current block is not EMPTY and the block below it IS EMPTY
